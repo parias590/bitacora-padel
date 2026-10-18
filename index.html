@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bitácora de Pádel</title>
+<meta name="description" content="Registro de entrenos y partidos de pádel con coach personal. Los datos se guardan en tu Google Drive.">
+<meta name="theme-color" content="#14467F">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pádel">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#EEF1EC; --surface:#FFFFFF; --sunk:#E2E7E1; --line:#CFD6CE;
+  --ink:#16201B; --muted:#5E6A63; --accent:#14467F; --accent-ink:#FFFFFF; --accent-soft:#DCE6F3;
+  --ball:#D4E83A; --ball-ink:#1E2608;
+  --good:#2E7A46; --bad:#B4513A; --work:#9A6008; --focus:#14467F; --other:#5E6A63;
+  --display:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1512; --surface:#18201C; --sunk:#212A25; --line:#2F3A34;
+  --ink:#E9EFEA; --muted:#9AA79F; --accent:#7FB0EC; --accent-ink:#0B1A2C; --accent-soft:#1D2D42;
+  --good:#6CC08A; --bad:#E2836B; --work:#E3A84A; --focus:#7FB0EC; --other:#9AA79F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1512; --surface:#18201C; --sunk:#212A25; --line:#2F3A34;
+  --ink:#E9EFEA; --muted:#9AA79F; --accent:#7FB0EC; --accent-ink:#0B1A2C; --accent-soft:#1D2D42;
+  --good:#6CC08A; --bad:#E2836B; --work:#E3A84A; --focus:#7FB0EC; --other:#9AA79F; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg)}
+body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:14px 0 10px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand .ball{width:22px;height:22px;border-radius:50%;background:var(--ball);flex:none;position:relative;overflow:hidden}
+.brand .ball::before,.brand .ball::after{content:"";position:absolute;width:22px;height:22px;border:2px solid #fff;border-radius:50%;opacity:.85}
+.brand .ball::before{left:-14px;top:0}.brand .ball::after{right:-14px;top:0}
+h1{font-family:var(--display);font-weight:700;font-size:1.35rem;margin:0;letter-spacing:-.02em;white-space:nowrap}
+.sync{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 10px;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.sync i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.sync.ok i{background:var(--good)}.sync.pend i{background:var(--work)}.sync.err i{background:var(--bad)}
+h2{font-family:var(--display);font-weight:700;font-size:1.15rem;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h3{font-size:.95rem;margin:0;font-weight:700}
+.label{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+.view{display:flex;flex-direction:column;gap:22px;padding-top:18px}
+section.block{display:flex;flex-direction:column;gap:10px}
+.banner{background:var(--accent-soft);border-radius:12px;padding:11px 13px;font-size:.9rem}
+.banner.ok{background:color-mix(in srgb,var(--good) 16%,var(--surface))}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:.88rem;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.ghost{background:transparent;border-style:dashed;color:var(--muted);font-size:.82rem;padding:6px 11px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field input,.field textarea,.field select{width:100%;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:1rem}
+.field input[type="date"]{min-height:46px}
+.field textarea{resize:vertical;line-height:1.5}
+textarea.main{min-height:190px}
+::placeholder{color:var(--muted);opacity:.75}
+.seg{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.seg button{height:38px;border:1px solid var(--line);background:var(--surface);border-radius:8px;font-weight:600}
+.seg button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.scale-ends{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:-4px}
+.btn{border:0;border-radius:12px;padding:14px 16px;font-weight:700;font-size:1rem}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;border:1px solid var(--line)}
+.btn.small{padding:8px 12px;font-size:.86rem;border-radius:9px;font-weight:600}
+.btn.danger{background:transparent;border:1px solid var(--bad);color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row .btn{flex:1}
+.hint{font-size:.83rem;color:var(--muted);margin:0}
+.mic-note{display:flex;gap:10px;align-items:flex-start;font-size:.83rem;color:var(--muted);background:var(--sunk);border-radius:10px;padding:10px 12px}
+.mic-note svg{flex:none;width:18px;height:18px;margin-top:1px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:.9rem;font-weight:600;z-index:20;max-width:calc(100% - 32px);text-align:center}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card.hero{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.card .kicker{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);font-weight:700}
+.big{font-family:var(--display);font-weight:700;font-size:1.6rem;letter-spacing:-.02em;line-height:1.1}
+ul.dots{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+ul.dots li{padding-left:16px;position:relative;font-size:.93rem}
+ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:7px;height:7px;border-radius:50%;background:var(--c,var(--accent))}
+/* categorías */
+.cat{border-left:3px solid var(--c);padding-left:12px;display:flex;flex-direction:column;gap:8px}
+.cat-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.cat-h h3{color:var(--c)}
+.cat-h .n{font-size:.78rem;color:var(--muted);font-weight:600}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 8px 8px 10px;display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:start}
+.item textarea{border:0;background:transparent;resize:none;padding:2px 0;font-size:.95rem;line-height:1.4;width:100%;min-width:0;overflow:hidden}
+.item textarea:focus{outline:none}
+.item:focus-within{border-color:var(--c)}
+.it-ctl{display:flex;gap:4px;align-items:center}
+.it-ctl select{border:1px solid var(--line);background:var(--bg);border-radius:7px;padding:4px 4px;font-size:.75rem;max-width:7.2rem}
+.x{width:30px;height:30px;border:0;background:transparent;color:var(--muted);font-size:1.25rem;line-height:1;border-radius:7px}
+.tags{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:.7rem;font-weight:600;border-radius:999px;padding:2px 8px;background:var(--sunk);color:var(--muted)}
+.tag.auto{background:color-mix(in srgb,var(--work) 18%,var(--surface));color:var(--work)}
+.autodate{min-height:46px;display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--sunk);border-radius:10px;padding:0 12px;font-weight:600;font-size:.95rem}
+.autodate small{font-size:.7rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.said{grid-column:1/-1;font-size:.76rem;color:var(--muted);font-style:italic}
+.qcard{background:var(--surface);border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:14px}
+.q{display:flex;flex-direction:column;gap:8px}
+.q+.q{border-top:1px dashed var(--line);padding-top:12px}
+.q p{margin:0;font-weight:600}
+.q .chip{font-size:.85rem}
+.qfree{display:flex;gap:6px}
+.qfree input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-size:.95rem}
+.q.done{flex-direction:row;gap:8px;align-items:baseline;font-size:.88rem;color:var(--muted)}
+.q.done b{color:var(--good)}
+.add{align-self:flex-start;border:0;background:none;color:var(--c);font-weight:600;font-size:.86rem;padding:2px 0}
+details.raw{font-size:.85rem;color:var(--muted)}
+details.raw summary{cursor:pointer;font-weight:600}
+details.raw p{white-space:pre-wrap;margin:.5em 0 0}
+/* historial */
+.list{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.entry{border-bottom:1px solid var(--line)}
+.entry>button.head{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:44px 1fr;gap:12px;padding:12px 0;cursor:pointer}
+.badge{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1rem;color:#fff;background:var(--accent)}
+.badge.partido,.badge.torneo{background:var(--ball);color:var(--ball-ink)}
+.badge.clase{background:var(--good)}
+.e-title{font-weight:600;display:flex;justify-content:space-between;gap:8px;min-width:0}
+.e-title span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.e-date{font-size:.78rem;color:var(--muted);font-weight:500;white-space:nowrap}
+.e-sub{font-size:.82rem;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+.wl{font-size:.7rem;font-weight:700;border-radius:5px;padding:1px 6px;color:#fff}
+.wl.w{background:var(--good)}.wl.l{background:var(--bad)}
+.pips{display:inline-flex;gap:2px}.pips i{width:6px;height:6px;border-radius:50%;background:var(--line)}.pips i.on{background:var(--accent)}
+.detail{padding:0 0 14px 56px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.dgroup h4{margin:0 0 4px;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--c)}
+.dgroup ul{margin:0;padding-left:18px;font-size:.92rem}
+.empty{padding:28px 0;color:var(--muted)}
+/* coach */
+.shotrow{display:grid;grid-template-columns:6.4rem 1fr auto;gap:8px;align-items:center;font-size:.86rem}
+.dv{display:grid;grid-template-columns:1fr 1fr;gap:2px;height:10px}
+.dv .l{display:flex;justify-content:flex-end;background:var(--sunk);border-radius:5px 0 0 5px;overflow:hidden}
+.dv .r{display:flex;background:var(--sunk);border-radius:0 5px 5px 0;overflow:hidden}
+.dv .l i{background:var(--bad);display:block;height:100%}
+.dv .r i{background:var(--good);display:block;height:100%}
+.trend{font-size:.7rem;font-weight:700;color:var(--muted);white-space:nowrap}
+.trend.up{color:var(--good)}.trend.down{color:var(--bad)}
+.legend{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--sunk);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.stat b{font-family:var(--display);font-size:1.3rem;font-variant-numeric:tabular-nums}
+.stat span{font-size:.72rem;color:var(--muted)}
+.chart{width:100%;height:auto;display:block}
+.chart text{font-size:9px;fill:var(--muted);font-family:var(--body)}
+.drill{background:var(--sunk);border-radius:10px;padding:10px 12px;font-size:.92rem}
+.ins{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.ins li{display:grid;grid-template-columns:8px 1fr;gap:10px;font-size:.92rem}
+.ins li::before{content:"";width:8px;height:8px;border-radius:50%;margin-top:.5em;background:var(--accent)}
+.ins li.good::before{background:var(--good)}.ins li.bad::before{background:var(--bad)}.ins li.work::before{background:var(--work)}
+/* ajustes */
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.88rem}
+.kv span{color:var(--muted)}
+.switch{display:flex;align-items:flex-start;gap:10px;font-size:.92rem}
+.switch input{width:20px;height:20px;accent-color:var(--accent);flex:none;margin-top:1px}
+code{font-size:.85em;background:var(--sunk);padding:1px 5px;border-radius:5px;overflow-wrap:anywhere}
+ol.steps{margin:0;padding-left:20px;font-size:.9rem;display:flex;flex-direction:column;gap:6px}
+/* tabs */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav.tabs button{border:0;background:none;padding:10px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.74rem;font-weight:600;color:var(--muted)}
+nav.tabs svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs button[aria-current="page"]{color:var(--accent)}
+@media (max-width:360px){.it-ctl select{max-width:5.8rem}.shotrow{grid-template-columns:5.4rem 1fr auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="ball" aria-hidden="true"></span><h1>Bitácora de Pádel</h1></div>
+    <button class="sync" id="sync" data-act="sync" title="Sincronizar con Google Drive"><i></i><span>Local</span></button>
+  </header>
+  <main id="app"></main>
+</div>
+<nav class="tabs" aria-label="Secciones">
+  <div class="in">
+    <button data-tab="new"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></svg>Registrar</button>
+    <button data-tab="hist"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4"/></svg>Historial</button>
+    <button data-tab="coach"><svg viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M6 15l4-5 3 3 5-7"/><circle cx="18" cy="6" r="1.2"/></svg>Coach</button>
+    <button data-tab="set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>Ajustes</button>
+  </div>
+</nav>
+<div class="toast" id="toast" hidden></div>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+
+<script>
+/*PARSER-START*/
+const DAY=864e5;
+const norm=s=>Array.from(String(s==null?"":s)).map(c=>{const d=Array.from(c.normalize("NFD"))[0];const l=d.toLowerCase();return l.length===d.length?l:d}).join("");
+const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+
+const TYPES=[["entreno","Entreno"],["partido","Partido"],["clase","Clase"],["torneo","Torneo"]];
+const CATS=[
+  {k:"focus",l:"Enfoque",c:"var(--focus)"},
+  {k:"good",l:"Salió bien",c:"var(--good)"},
+  {k:"bad",l:"No tan bien",c:"var(--bad)"},
+  {k:"work",l:"A trabajar",c:"var(--work)"},
+  {k:"other",l:"Otras notas",c:"var(--other)"}
+];
+const SHOTS=[
+ {id:"bandeja",l:"Bandeja",a:"la bandeja",syn:["bandeja","bandejas"]},
+ {id:"vibora",l:"Víbora",a:"la víbora",syn:["vibora","viboras"]},
+ {id:"remate",l:"Remate",a:"el remate",syn:["remate","remates","rematar","rematando","smash","por tres","por 3","x3","por cuatro","por 4","x4","rulo"]},
+ {id:"globo",l:"Globo",a:"el globo",syn:["globo","globos","globear"]},
+ {id:"volea",l:"Volea",a:"la volea",syn:["volea","voleas","volear","voleando","voleo","bloqueo","bloqueos"]},
+ {id:"derecha",l:"Derecha",a:"la derecha",syn:["derecha","derechas","drive"]},
+ {id:"reves",l:"Revés",a:"el revés",syn:["reves"]},
+ {id:"saque",l:"Saque",a:"el saque",syn:["saque","saques","servicio","servicios","sacar","sacando","sacaba"]},
+ {id:"resto",l:"Resto",a:"el resto",syn:["resto","restos","restar","restando","restaba","devolucion","devoluciones"]},
+ {id:"pared",l:"Pared",a:"las salidas de pared",syn:["pared","paredes","salida de pared","salidas de pared","bajada de pared","bajadas de pared","contrapared","contraparedes","cristal","cristales","rebote","rebotes"]},
+ {id:"chiquita",l:"Chiquita",a:"la chiquita",syn:["chiquita","chiquitas","dejada","dejadas"]},
+ {id:"posicion",l:"Posición",a:"la colocación y las transiciones",syn:["posicion","posicionamiento","colocacion","colocarme","colocado","colocados","transicion","transiciones","subir a la red","subida a la red","subir a red","ganar la red","tomar la red","recuperar la red","bajar al fondo","tactica"]},
+ {id:"defensa",l:"Defensa",a:"la defensa",syn:["defensa","defender","defendiendo","defendia","defensivo","defensiva"]},
+ {id:"ataque",l:"Ataque",a:"el ataque",syn:["ataque","atacar","atacando","atacaba","definir","definicion","definiendo","presionar"]},
+ {id:"fisico",l:"Físico",a:"el físico",syn:["fisico","fisicamente","piernas","juego de pies","desplazamiento","desplazamientos","desplazarme","cansado","cansada","cansancio","resistencia","agotado","agotada"]},
+ {id:"mental",l:"Mental",a:"la parte mental",syn:["mental","mentalmente","cabeza","concentracion","concentrado","concentrada","desconcentrado","desconcentrada","nervios","nervioso","nerviosa","frustracion","frustrado","frustrada","paciencia","impaciente","confianza","precipitado","precipitada","precipitarme"]},
+ {id:"comunicacion",l:"Comunicación",a:"la comunicación con tu pareja",syn:["comunicacion","comunicarnos","comunicar","hablarnos","nos hablamos","comunicamos","comunicabamos","nos comunicamos","compenetracion","compenetrados","coordinacion","coordinarnos"]}
+];
+const SHOT_BY={};SHOTS.forEach(s=>{SHOT_BY[s.id]=s;s.re=new RegExp("(?:^|[^a-z0-9])(?:"+s.syn.map(reEsc).join("|")+")(?=$|[^a-z0-9])")});
+const shotLabel=id=>SHOT_BY[id]?SHOT_BY[id].l:id;
+function detectShots(text){const n=norm(text);return SHOTS.filter(s=>s.re.test(n)).map(s=>s.id)}
+
+const FOCUS_RE=/\b(hemos trabajado|he trabajado|trabajamos|nos hemos centrado|nos centramos|me he centrado|me centre|centrad[oa]s? en|enfoque|enfocad[oa]s? en|el objetivo (era|de hoy|del entreno|de la sesion|de la clase)|hoy (tocaba|toco|hemos hecho|hicimos|he hecho|nos ha tocado)|la clase (fue|era|ha sido) de|clase de (?!(una|un|dos|media|hora|\d))|ejercicios? de|hemos practicado|he practicado|practicamos|hemos entrenado|entrenamos|sesion de|entreno de|me he centrado)\b/;
+const WORK_RE=/\b(tengo que|tengo q|tendria que|tendre que|deberia|debo|hay que|habria que|necesito|me falta|nos falta|falta|a trabajar|trabajar|seguir trabajando|mejorar|practicar|pulir|reforzar|corregir|la proxima( vez)?|el proximo|para el proximo|pendiente|quiero (mejorar|trabajar|practicar|conseguir|probar)|me gustaria|objetivo para)\b/;
+const BAD_G=/\b(mal|mala|malo|malas|malos|fatal|horrible|desastre|fall\w*|me costo|me cuesta|nos costo|nos cuesta|costado|no (me |nos |le )?(ha |han |he )?(sal\w*|entr\w*|consegu\w*|acert\w*|funcion\w*|aguant\w*)|peor|error\w*|flojo|floja|regular|perdi|perdimos|perdido|perdiendo|a la red|a la reja|fuera|precipit\w*|nervios\w*|frustr\w*|cansad\w*|agotad\w*|desconcentr\w*|lento|lenta|sin confianza|me pase|regal\w*|blando|blanda|forzad\w*|incomod\w*|perdid[oa]|bloquead[oa]|dudas|dudaba|indeciso|larg[oa]s?|cort[oa]s?|se me (iba|iban|quedaba|quedaban|escapaba|escapaban))\b/g;
+const GOOD_G=/\b(bien|genial|perfect\w*|buen|buena|buenas|buenos|excelente|me (ha |han )?salido|salio|salia|salian|sale|acert\w*|mejor|mejorado|mejorando|content\w*|comod\w*|segur[oa]s?|solid[oa]s?|consistente|funcion\w*|gane|ganamos|ganado|ganando|controlad[oa]|fluid[oa]|disfrut\w*|eficaz|efectiv[oa]|precis[oa]|ganador\w*|bonito|brutal|increible|a gusto|entraba|entraban|entro)\b/g;
+const NEG_RE=/\b(no|nada|ni|sin|nunca|tampoco)\s+(\w+\s+){0,2}$/;
+
+function negBefore(n,idx){return NEG_RE.test(n.slice(Math.max(0,idx-28),idx))}
+function sentiment(n){
+  let g=0,b=0;
+  for(const m of n.matchAll(GOOD_G)){if(negBefore(n,m.index))b++;else g++}
+  for(const m of n.matchAll(BAD_G)){
+    const w=m[0];
+    if(/^(no |fall)/.test(w)||/^(mal|mala|malo|malas|malos|peor)$/.test(w)){ if(w.startsWith("fall")&&/\b(no|sin|ni|nunca)\s+(he |hemos |\w+ )?$/.test(n.slice(Math.max(0,m.index-18),m.index))){g++;continue} }
+    b++;
+  }
+  if(/\blo (malo|peor)\b/.test(n))b+=2;
+  if(/\blo (bueno|mejor|positivo)\b/.test(n))g+=2;
+  return {g,b};
+}
+function classify(p){
+  const n=norm(p);
+  const w=WORK_RE.exec(n),f=FOCUS_RE.exec(n);
+  if(w&&!(f&&f.index<w.index&&f.index<14))return "work";
+  if(f)return "focus";
+  const {g,b}=sentiment(n);
+  if(b>g)return "bad";
+  if(g>b)return "good";
+  if(b>0)return "bad";
+  return "other";
+}
+const LEAD=/^(y|e|pero|aunque|sin embargo|en cambio|mientras que|por otro lado|por otra parte|ademas|tambien|bueno|pues|vale|entonces|luego|despues|o sea|en plan|eh+|em+|mm+|a ver|la verdad( es que)?|creo que|en general|total que|al final)\b[\s,:]*/;
+function cleanPiece(p){
+  let s=String(p).replace(/\s+/g," ").trim().replace(/^[,:\-–\s]+/,"");
+  for(let i=0;i<5;i++){const m=LEAD.exec(norm(s));if(!m||!m[0])break;s=s.slice(m[0].length).trim()}
+  s=s.replace(/[\s,]+(y|e|pero|aunque|que)$/i,"").replace(/[\s,;:]+$/,"").trim();
+  if(!s)return "";
+  return s.charAt(0).toUpperCase()+s.slice(1);
+}
+const words=s=>s.split(/\s+/).filter(Boolean).length;
+// Puntos de corte para texto dictado sin puntuación: antes de "el/la + golpe" y de expresiones que abren idea nueva.
+const RUN_SPLIT=new RegExp("\\s(?=(?:y\\s+|pero\\s+)?(?:(?:el|la|los|las|mi|mis|en el|en la|en los|en las|con el|con la|con los|con las)\\s+(?:"+SHOTS.flatMap(s=>s.syn).filter(w=>!/^(x\\d|por \\d)/.test(w)).map(reEsc).join("|")+")\\b|(?:al final|lo bueno|lo malo|lo mejor|lo peor|me falta|nos falta|tengo que|hay que|la proxima|ganamos|perdimos|hemos ganado|hemos perdido)\\b))","g");
+function splitRun(s){
+  if(words(s)<=12)return [s];
+  const n=norm(s);const cuts=[0];
+  for(const m of n.matchAll(RUN_SPLIT)){const at=m.index+1;const prev=n.slice(cuts[cuts.length-1],at).trim();const lw=prev.split(/\s+/).pop()||"";
+    const idea=/^(y\s+|pero\s+)?(al final|lo (bueno|malo|mejor|peor)|me falta|nos falta|tengo que|hay que|la proxima|ganamos|perdimos|hemos (ganado|perdido))\b/.test(n.slice(at));
+    if(words(prev)>=3&&(idea||!/(ar|er|ir|ado|ido|ando|iendo)$/.test(lw))&&!/^(de|del|a|al|en|con|que|y|o|para|por|sobre|es|era|fue|son)$/.test(lw))cuts.push(at)}
+  const res=[];for(let i=0;i<cuts.length;i++){const seg=s.slice(cuts[i],cuts[i+1]).trim();if(seg)res.push(seg)}
+  if(res.length>1&&words(res[res.length-1])<3){const last=res.pop();res[res.length-1]+=" "+last}
+  return res;
+}
+function splitClauses(text){
+  let t=String(text||"").replace(/\r/g,"").replace(/\n+/g,". ");
+  t=t.replace(/\s*,?\s+(?=(pero|aunque|sin embargo|en cambio|mientras que|por otro lado|por otra parte|lo malo|lo bueno|lo peor|lo mejor|además|ademas|también|tambien|luego|después)\s)/gi,"\u0001");
+  let parts=t.split(/[.!?;]+(?:\s+|$)|\u0001/);
+  const out=[];
+  for(let p of parts){
+    p=(p||"").trim(); if(!p)continue;
+    // comas: se corta solo si ambos lados son frases de verdad (evita romper listas "la bandeja, la víbora y…")
+    const sub=[];
+    const hasMood=x=>{const q=norm(x);return q.search(GOOD_G)>=0||q.search(BAD_G)>=0};
+    for(const c of p.split(/,\s*/)){
+      const prev=sub[sub.length-1];
+      const join=prev!==undefined&&(words(prev)<4||words(c)<4)&&!(words(prev)>=2&&words(c)>=2&&hasMood(prev)&&hasMood(c));
+      if(join)sub[sub.length-1]+=", "+c; else sub.push(c);
+    }
+    for(const s of sub){
+      for(const r of splitRun(s)){
+        if(words(r)>26){
+          const bits=r.split(/\s+y\s+/);let acc="";
+          for(const b of bits){if(!acc){acc=b;continue}if(words(acc)>=5&&words(b)>=4){out.push(acc);acc=b}else acc+=" y "+b}
+          if(acc)out.push(acc);
+        } else out.push(r);
+      }
+    }
+  }
+  return out.map(cleanPiece).filter(s=>s&&words(s)>=2);
+}
+const META_RE=/\b(entreno|entrenamiento|partido|partida|clase|torneo|hora|horas|minutos|min|monitor|profe|contra)\b|\b[0-7]\s*(-|–|a|\/)\s*[0-7]\b/;
+const isMeta=(piece,k,shots)=>{const q=norm(piece);return !shots.length&&words(piece)<=12&&META_RE.test(q)&&(k==="other"||k==="focus"||/\b(ganamos|perdimos|gane|perdi|hemos ganado|hemos perdido)\b|\b[0-7]\s*[-–\/ ]\s*[0-7]\b/.test(q))};
+const SET_OK=(a,b)=>{const hi=Math.max(a,b),lo=Math.min(a,b);return (hi===6&&lo<=4)||(hi===7&&(lo===5||lo===6))};
+const NUMW={una:1,un:1,dos:2,tres:3,cuatro:4};
+const STOPN=new Set(["la","el","los","las","mi","un","una","que","calor","viento","frio","bola","bolas","pala","pista","todo","todos","nadie","el","ellos","ellas","mucho","poco"]);
+SHOTS.forEach(s=>s.syn.forEach(w=>STOPN.add(w.split(" ")[0])));
+function parseSession(text){
+  const out={type:null,dur:null,partner:"",result:"",won:null,points:{focus:[],good:[],bad:[],work:[],other:[]}};
+  const n=norm(text);
+  if(/\btorneo\b/.test(n))out.type="torneo";
+  else if(/\b(partido|partidos|partida|jugamos contra|hemos jugado contra|jugue contra|amistoso)\b/.test(n))out.type="partido";
+  else if(/\b(clase|monitor|entrenador|profe|profesor)\b/.test(n))out.type="clase";
+  else if(/\b(entreno|entrenamiento|entrenar|ejercicios|peloteo)\b/.test(n))out.type="entreno";
+  const sets=[];
+  for(const m of n.matchAll(/\b([0-7])\s*(?:-|–|a|\/|\s)\s*([0-7])\b/g)){const a=+m[1],b=+m[2];if(SET_OK(a,b))sets.push([a,b])}
+  if(sets.length){out.result=sets.map(s=>s[0]+"-"+s[1]).join(" ");const mine=sets.filter(s=>s[0]>s[1]).length;if(mine*2>sets.length)out.won=true;else if(mine*2<sets.length)out.won=false}
+  if(/\b(ganamos|gane|hemos ganado|he ganado|victoria|ganado el partido)\b/.test(n))out.won=true;
+  if(/\b(perdimos|perdi el|hemos perdido|he perdido el|derrota|perdido el partido)\b/.test(n))out.won=false;
+  if(out.won!==null&&out.type===null)out.type="partido";
+  let mins=null;
+  if(/\bhora y media\b/.test(n))mins=90;
+  else if(/\bmedia hora\b/.test(n))mins=30;
+  let m=n.match(/\b(\d+(?:[.,]\d+)?)\s*(h|horas?)\b/);
+  if(mins==null&&m)mins=Math.round(parseFloat(m[1].replace(",","."))*60);
+  m=n.match(/\b(\d{2,3})\s*(min|mins|minutos)\b/); if(mins==null&&m)mins=+m[1];
+  m=n.match(/\b(una|un|dos|tres)\s+horas?\b/); if(mins==null&&m)mins=NUMW[m[1]]*60;
+  if(mins&&mins>=10&&mins<=360)out.dur=mins;
+  const pm=String(text).match(/\b(?:con|junto a|junto con|mi pareja(?: ha sido| era| fue)?|mi compañer[oa](?: ha sido| era| fue)?)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñü]+(?:\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñü]+)?)/);
+  if(pm&&!STOPN.has(norm(pm[1].split(" ")[0])))out.partner=pm[1];
+  let prevSh=[];
+  for(const piece of splitClauses(text)){
+    const k=classify(piece);let sh=detectShots(piece);
+    // "No me salía nada bien" justo después de "Ejercicios de víbora": hereda el golpe de la frase anterior
+    if(!sh.length&&(k==="good"||k==="bad")&&prevSh.length&&prevSh.length<=2&&words(piece)<=8)sh=prevSh.slice();
+    prevSh=sh;
+    if(isMeta(piece,k,sh))continue;
+    out.points[k].push({t:summarize(k,piece,sh),o:piece,s:sh});
+  }
+  addAutoWork(out.points);
+  return out;
+}
+function addAutoWork(points){
+  points.work=points.work.filter(it=>!it.auto);
+  const covered=new Set();points.work.forEach(it=>(it.s||[]).forEach(id=>covered.add(id)));
+  points.bad.forEach(it=>{const sh=(it.s||[]).filter(id=>!covered.has(id));if(!sh.length)return;sh.forEach(id=>covered.add(id));
+    points.work.push({t:subjectOf(it.o||it.t,sh)||SHOT_BY[sh[0]].l,s:sh,auto:true})});
+}
+
+/* ---------- Resumen: convierte frases en notas de entrenador ---------- */
+const COMPOUND=[
+ [/\bvoleas? de reves\b/,"Volea de revés",["volea","reves"]],
+ [/\bvoleas? de derecha\b/,"Volea de derecha",["volea","derecha"]],
+ [/\b(remates?|smash) (por|x) ?(3|tres)\b|\bpor tres\b|\bx3\b/,"Remate por 3",["remate"]],
+ [/\b(remates?|smash) (por|x) ?(4|cuatro)\b|\bpor cuatro\b|\bx4\b/,"Remate por 4",["remate"]],
+ [/\bbajadas? de pared\b/,"Bajada de pared",["pared"]],
+ [/\bsalidas? de pared\b/,"Salida de pared",["pared"]],
+ [/\bdoble pared\b/,"Doble pared",["pared"]],
+ [/\bcontraparede?s?\b/,"Contrapared",["pared"]],
+ [/\bresto de saque\b/,"Resto",["resto","saque"]],
+ [/\bjuego de pies\b/,"Juego de pies",["fisico"]]
+];
+function subjectOf(clause,shots){
+  const n=norm(clause),used=new Set(),parts=[];
+  for(const [re,l,ids] of COMPOUND){if(!re.test(n)||ids.some(id=>used.has(id)))continue;const m=n.search(re);parts.push([m,l]);ids.forEach(id=>used.add(id))}
+  (shots||[]).forEach(id=>{if(used.has(id)||!SHOT_BY[id])return;used.add(id);const m=n.search(SHOT_BY[id].re);parts.push([m<0?999:m,SHOT_BY[id].l])});
+  parts.sort((a,b)=>a[0]-b[0]);
+  const L=parts.map((p,i)=>i?p[1].charAt(0).toLowerCase()+p[1].slice(1):p[1]);
+  if(!L.length)return "";if(L.length===1)return L[0];
+  return L.slice(0,-1).join(", ")+" y "+L[L.length-1];
+}
+const DESC_BAD=[
+ [/\ba la red\b/,"bolas a la red"],[/\b(a la reja|fuera)\b/,"bolas fuera"],[/\blarg[oa]s?\b/,"se va larga"],[/\bcort[oa]s?\b/,"se queda corta"],
+ [/\bprecipit/,"precipitación"],[/\bnervios/,"nervios"],[/\bfrustr/,"frustración"],[/\b(cansad|agotad|cansancio)/,"cansancio"],[/\bdesconcentr/,"falta de concentración"],
+ [/\b(llegaba|llego|llegue|llegando) tarde\b|\btarde a la bola\b/,"llego tarde a la bola"],[/\blent[oa]s?\b/,"lentitud"],[/\b(dudas|dudaba|indecis)/,"dudas al decidir"],
+ [/\bforzad/,"fuerzo demasiado"],[/\b(sin confianza|falta de confianza|poca confianza)\b/,"falta de confianza"],[/\bincomod/,"incomodidad"],
+ [/\bregal/,"errores no forzados"],[/\befecto\b/,"falta de efecto"],[/\bbloquead/,"bloqueo"],[/\berror/,"errores"],[/\bfall/,"fallos"],
+ [/\b(me|nos) (cuesta|costo|costaba)\b/,"me cuesta"],[/\bno (me |nos |le )?(ha |han )?(sal|entr)/,"no sale"],[/\bpeor\b/,"peor que otras veces"],[/\bregular\b/,"irregular"],
+ [/\b(flojo|floja|blando|blanda)\b/,"sin intensidad"],[/\b(fatal|horrible|desastre|muy mal)\b/,"muy mal"],[/\bmal(a|o|as|os)?\b/,"mal"]
+];
+const DESC_GOOD=[
+ [/\bno (he |hemos |\w+ )?fall/,"sin fallos"],[/\bmejor que (la|el|otras|antes|ayer|la semana|el otro)\b/,"mejor que antes"],[/\b(mejor|mejorado|mejorando)\b/,"mejora"],
+ [/\b(segur[oa]s?|confianza)\b/,"con seguridad"],[/\b(solid[oa]s?|consistente|regularidad)\b/,"consistente"],[/\b(comod|a gusto)/,"cómodo"],[/\b(acert|precis)/,"precisión"],
+ [/\bcontrol/,"controlado"],[/\bfluid/,"fluido"],[/\bganador/,"puntos ganadores"],[/\b(entraba|entraban|entro|entra)\b/,"entra"],[/\bfuncion/,"funciona"],[/\bdisfrut/,"disfruté"],
+ [/\b(genial|brutal|excelente|perfect\w*|increible|muy bien|muy buen\w*)\b/,"muy bien"],[/\bbastante bien\b/,"bastante bien"],[/\b(bien|buen\w*)\b/,"bien"]
+];
+const GENERIC=new Set(["muy mal","mal","fallos","errores","me cuesta","no sale","muy bien","bien","bastante bien"]);
+const RECUR=/\b(otra vez|de nuevo|siempre|todo el rato|toda la sesion|todo el partido|constantemente|cada vez|como siempre)\b/;
+function descriptors(n,list){const out=[];for(const [re,d] of list){if(re.test(n)&&!out.includes(d))out.push(d)}const spec=out.filter(d=>!GENERIC.has(d));return (spec.length?spec:out.slice(0,1)).slice(0,2)}
+const LEADW=/^(seguir( con| trabajando| practicando)?|trabajar|mejorar|practicar|pulir|reforzar|corregir|centrarme|centrarnos|en|el|la|los|las|de|del|con|a|al|un poco|mas|mucho|algo|que|quiero|vez|hoy|sobre todo)\b\s*/;
+function stripMarker(clause,cat){
+  let s=clause;const re=cat==="focus"?FOCUS_RE:WORK_RE;
+  const m=re.exec(norm(s));if(!m)return "";
+  s=s.slice(m.index+m[0].length).trim();
+  for(let i=0;i<8;i++){const q=norm(s);const w=WORK_RE.exec(q),f=FOCUS_RE.exec(q);
+    if(w&&w.index===0){s=s.slice(w[0].length).trim();continue}
+    if(f&&f.index===0){s=s.slice(f[0].length).trim();continue}
+    const l=LEADW.exec(q);if(l&&l[0]){s=s.slice(l[0].length).trim();continue}break}
+  s=s.replace(/\b(y|e) (el|la|los|las) /gi,"$1 ").replace(/[\s,;:.]+$/,"");
+  return s?s.charAt(0).toUpperCase()+s.slice(1):"";
+}
+function summarize(cat,clause,shots){
+  const n=norm(clause),subj=subjectOf(clause,shots);
+  if(cat==="good"||cat==="bad"){
+    const d=descriptors(n,cat==="good"?DESC_GOOD:DESC_BAD);
+    const rec=cat==="bad"&&RECUR.test(n)?" (se repite)":"";
+    if(subj&&d.length)return subj+": "+d.join(", ")+rec;
+    if(!subj&&d.length&&words(clause)>7)return "En general: "+d.join(", ")+rec;
+    return clause;
+  }
+  if(cat==="focus"||cat==="work"){
+    const st=stripMarker(clause,cat);
+    if(st&&words(st)<=9)return st;
+    if(subj)return subj;
+    return clause;
+  }
+  return clause;
+}
+
+/* ---------- Preguntas de seguimiento ---------- */
+const CAUSES={
+ bandeja:["Mal colocado bajo la bola","Golpeo demasiado fuerte","No giro los hombros","Mala dirección"],
+ vibora:["Poco efecto","Impacto bajo","Demasiado plana","Mala dirección"],
+ remate:["Mal colocado","Era bola de bandeja","Timing del salto","Impacto bajo"],
+ globo:["Se queda corto","Demasiado bajo","Mala dirección","Mal momento para tirarlo"],
+ volea:["Pala atrás o tarde","Demasiado swing","Muñeca floja","Pies quietos"],
+ derecha:["Preparo tarde","Los pies","Poca altura sobre la red","Mala dirección"],
+ reves:["Preparo tarde","Los pies","Poca altura sobre la red","Mala dirección"],
+ saque:["Poca profundidad","Dirección","Nervios","No subo a la red"],
+ resto:["Llego tarde","Sube demasiado","Dirección","Elegir resto o globo"],
+ pared:["Golpeo antes de tiempo","Los pies / colocación","Falta de paciencia","Elijo mal el golpe"],
+ chiquita:["Demasiado alta","Demasiado larga","Mal momento"],
+ posicion:["Subo tarde a la red","Separados de mi pareja","No recupero la red","Transiciones lentas"],
+ defensa:["Pegado al cristal","Sin globos","Precipitado","Mal colocado"],
+ ataque:["Defino demasiado pronto","Falta de paciencia","Sin profundidad","Dirección previsible"],
+ fisico:["Cansancio","Piernas lentas","Poco calentamiento","Alguna molestia"],
+ mental:["Nervios al principio","Frustración tras errores","Prisa por acabar los puntos","Desconexión"],
+ comunicacion:["Bolas al centro","Cambios de lado","No nos hablábamos","Táctica distinta"],
+ general:["Técnica","Colocación","Decisión del golpe","Cabeza"]
+};
+function articleFor(it){const id=(it.s||[])[0];const sub=subjectOf(it.o||it.t,it.s||[]);if(!id||!sub)return "eso";const art=SHOT_BY[id].a.split(" ")[0];return art+" "+sub.charAt(0).toLowerCase()+sub.slice(1)}
+function buildQuestions(d){
+  const Q=[],P=d.points,isMatch=d.type==="partido"||d.type==="torneo";
+  const mentioned=[...new Set(CATS.flatMap(c=>P[c.k].flatMap(it=>it.s||[])))];
+  if(isMatch&&d.won==null&&!d.result)Q.push({kind:"result",q:"¿Cómo quedó el partido?",opts:["Ganado","Perdido"],free:"Resultado, p. ej. 6-4 6-3"});
+  const bad=P.bad.find(it=>(it.s||[]).length);
+  if(bad){const id=bad.s[0];Q.push({kind:"cause",key:bad.k,q:`¿Por qué crees que fallaba ${articleFor(bad)}?`,opts:CAUSES[id]||CAUSES.general,free:"Otra causa"})}
+  else if(P.bad.length)Q.push({kind:"cause",key:P.bad[0].k,q:`Sobre «${P.bad[0].t}»: ¿qué fallaba sobre todo?`,opts:CAUSES.general,free:"Otra causa"});
+  if(!P.focus.length)Q.push({kind:"focus",q:"¿En qué querías centrarte hoy?",opts:[...mentioned.slice(0,3).map(shotLabel),"Sin objetivo concreto"],free:"Otro objetivo"});
+  if(!P.work.some(it=>!it.auto))Q.push({kind:"work",q:"¿Qué te llevas para la próxima sesión?",opts:[...P.work.filter(it=>it.auto).map(it=>it.t).slice(0,3),"Mantener lo de hoy"],free:"Otra cosa"});
+  if(!P.good.length)Q.push({kind:"good",q:"¿Algo que te haya salido bien?",opts:mentioned.slice(0,3).map(shotLabel),free:"Lo que salió bien"});
+  if(Q.length<3&&!d.feel)Q.push({kind:"feel",q:"¿Qué sensaciones te deja la sesión? (1 malas · 5 muy buenas)",opts:["1","2","3","4","5"]});
+  return Q.slice(0,3).map((q,i)=>Object.assign(q,{i,done:false,answer:""}));
+}
+/* ---------- Coach ---------- */
+const DRILLS={
+ bandeja:["Bandeja controlada: 3 series de 10 bandejas cruzadas a partir de globos; objetivo, que bote antes de la reja lateral y te deje volver a la red.","Bandeja + recuperar red: tras cada bandeja, dos pasos adelante y para una volea. Calidad antes que potencia.","Dianas: coloca un cono en la esquina del rival y cuenta aciertos sobre 20 bandejas. Apunta el porcentaje en la entrada."],
+ vibora:["Víbora paralela: 3 series de 10 con globos a media altura, buscando efecto lateral y bote bajo tras el cristal.","Bandeja o víbora: que te canten el golpe en el último momento según la altura del globo; 20 repeticiones."],
+ remate:["Decide antes de saltar: globos variados y elegir entre remate por 3, por 4 o bandeja. Si dudas, bandeja.","Remate por 3: 3 series de 8 desde la línea de saque, girando hombros y golpeando con el brazo extendido arriba."],
+ globo:["Globo profundo: 20 globos desde el fondo; cuentan solo los que botan en los últimos 2 metros de la pista rival.","Bajada de pared + globo: tras la pared, globo alto y profundo; tu compañero sube y valora la altura."],
+ volea:["Muro de voleas: 2 x 3 minutos de voleas cortas con tu pareja en la red, pala siempre delante y sin dejar caer la bola.","Volea profunda al centro: 20 voleas bloqueadas al cuerpo del rival del fondo, sin swing.","Volea de revés a los pies: 3 series de 10, flexionando piernas y no la muñeca."],
+ derecha:["Derecha cruzada: 3 x 2 minutos de peloteo cruzado desde el fondo con margen sobre la red.","Derecha tras lateral: bola al cristal lateral y golpe después del rebote, 3 series de 10."],
+ reves:["Revés con preparación temprana: 3 series de 10 cruzado y 3 de 10 paralelo, pala preparada antes del bote.","Revés tras pared de fondo: 20 repeticiones esperando a que la bola baje antes de golpear."],
+ saque:["Saque a la reja y a la T: 3 series de 10 por lado, apuntando aciertos.","Saque + primera volea: saca y sube a la red; 15 repeticiones buscando volea profunda."],
+ resto:["Resto bajo a los pies del que sube: 20 restos por lado.","Resto o globo: alterna resto bajo y globo según la subida del sacador; 3 series de 10."],
+ pared:["Salida de pared de fondo: 3 series de 10 dejando bajar la bola, pies de lado y golpe suave al centro.","Doble pared (fondo + lateral): 2 series de 10 con lanzamientos, terminando en globo o bola baja.","Bajada de pared ofensiva: tras un globo pasado, bájala con potencia controlada a la reja; 15 repeticiones."],
+ chiquita:["Chiquita a los pies: 3 series de 10 desde el fondo, toque suave que caiga justo tras la red.","Juego de chiquitas: 5 minutos en los que el punto solo vale si la bola va a los pies del que está en la red."],
+ posicion:["Sombras de transición: subir juntos tras globo propio y bajar juntos ante globo rival, 4 x 1 minuto.","Juego condicionado: el punto solo cuenta si los dos estáis en la misma línea (red o fondo) al golpear."],
+ defensa:["Defensa bajo presión: 3 x 1 minuto defendiendo voleas solo con globos y bolas al centro.","2 contra 1 defensivo: tú defiendes; objetivo, mantener la bola 8 golpes seguidos."],
+ ataque:["Elegir cuándo definir: en juego, solo se remata bola por encima de la cabeza; el resto, bandeja o volea profunda.","Volea en ángulo: con bola alta y lenta, volea ganadora a la reja; 20 repeticiones."],
+ fisico:["Juego de pies: 4 x 30 s de split-step y desplazamiento lateral entre conos al empezar cada sesión.","Resistencia: 3 x 4 minutos de peloteo intenso con 1 minuto de descanso."],
+ mental:["Rutina entre puntos: respira, mira las cuerdas y decide el siguiente golpe. Hazla en cada punto del próximo partido.","Punto después del error: tras cada fallo, el siguiente punto se juega con bola segura al centro."],
+ comunicacion:["Habla en cada bola: «mía», «tuya», «sube», «atrás». Pide a tu pareja que te lo puntúe al final.","Antes de jugar, acordad quién coge las bolas al centro y quién manda en los globos."],
+ general:["Calentamiento con objetivo: 10 minutos de voleas y bandejas buscando 20 bolas seguidas sin fallo.","Juego a puntos con un solo objetivo táctico (por ejemplo, jugar al centro) y anótalo al terminar."]
+};
+const CUES=["Antes de cada saque, decide a dónde vas a jugar la primera bola.","Si dudas, juega al centro: reduce errores y genera confusión.","Tras un error, una respiración larga y bola segura en el punto siguiente.","Habla con tu pareja después de cada punto, aunque sea una palabra.","Mira la bola hasta el impacto en los golpes por arriba.","Pies activos: split-step en cada golpe del rival."];
+const typeLabel=t=>(TYPES.find(x=>x[0]===t)||[0,"Sesión"])[1];
+function dateTs(e){const t=Date.parse((e.date||"")+"T12:00:00");return isFinite(t)?t:(e.ts||0)}
+function liveEntries(all){return all.filter(e=>!e.deleted).sort((a,b)=>dateTs(a)-dateTs(b)||(a.ts||0)-(b.ts||0))}
+function analyze(all,now){
+  now=now||Date.now();
+  const E=liveEntries(all);
+  const R={n:E.length,E,shots:[],weak:[],strong:[],insights:[],plan:null,feel:[],matches:null,last:E[E.length-1]||null};
+  if(!E.length)return R;
+  const st={};SHOTS.forEach(s=>st[s.id]={id:s.id,g:0,b:0,gw:0,bw:0,f:0,w:0,hist:[],lastFocus:-1,recentWork:0});
+  E.forEach((e,i)=>{
+    const age=Math.max(0,(now-dateTs(e))/DAY),wt=Math.pow(.5,age/30);
+    const P=e.points||{};
+    const inE={};
+    for(const k of ["focus","good","bad","work"])(P[k]||[]).forEach(it=>(it.s||[]).forEach(id=>{
+      const x=st[id];if(!x)return;
+      const key=k+id;if(inE[key])return;inE[key]=1;
+      if(k==="good"){x.g++;x.gw+=wt;x.hist.push(1)}
+      else if(k==="bad"){x.b++;x.bw+=wt;x.hist.push(-1)}
+      else if(k==="focus"){x.f++;x.lastFocus=i}
+      else if(k==="work"){x.w++;if(i>=E.length-8)x.recentWork+=it.auto?.5:1}
+    }));
+  });
+  const arr=Object.values(st);
+  arr.forEach(x=>{
+    x.score=x.bw-.6*x.gw+.25*x.recentWork;
+    x.str=x.gw-.6*x.bw;
+    x.trend=0;
+    if(x.hist.length>=4){const h=Math.floor(x.hist.length/2);const a=x.hist.slice(0,h),b=x.hist.slice(h);const av=v=>v.reduce((s,y)=>s+y,0)/v.length;const d=av(b)-av(a);x.trend=d>=.5?1:d<=-.5?-1:0}
+  });
+  R.shots=arr.filter(x=>x.g+x.b>0).sort((a,b)=>(b.gw+b.bw)-(a.gw+a.bw));
+  R.weak=arr.filter(x=>x.b>0&&x.score>.15).sort((a,b)=>b.score-a.score).slice(0,3);
+  R.strong=arr.filter(x=>x.g>0&&x.str>.3).sort((a,b)=>b.str-a.str).slice(0,3);
+  const neglected=arr.filter(x=>x.recentWork>=2&&x.lastFocus<E.length-4).sort((a,b)=>b.recentWork-a.recentWork);
+  // sensaciones
+  R.feel=E.slice(-20).map(e=>({f:e.feel||null,en:e.energy||null,d:e.date,t:e.type}));
+  // partidos
+  const M=E.filter(e=>(e.type==="partido"||e.type==="torneo")&&(e.won===true||e.won===false));
+  if(M.length){
+    const w=M.filter(e=>e.won).length;
+    const last=M.slice(-10);
+    let streak=0,sv=M[M.length-1].won;for(let i=M.length-1;i>=0&&M[i].won===sv;i--)streak++;
+    const byP={};M.forEach(e=>{const p=(e.partner||"").trim();if(!p)return;const k=norm(p);byP[k]=byP[k]||{name:p,w:0,n:0};byP[k].n++;if(e.won)byP[k].w++});
+    R.matches={n:M.length,w,pct:Math.round(100*w/M.length),last:last.map(e=>e.won),streak,streakWon:sv,partners:Object.values(byP).filter(p=>p.n>=3).sort((a,b)=>b.n-a.n)};
+  }
+  // insights
+  const I=R.insights;
+  const lastTs=dateTs(R.last);const since=Math.floor((now-lastTs)/DAY);
+  if(since>=7)I.push({tone:"work",t:`Llevas ${since} días sin registrar ninguna sesión. Si has jugado, apúntalo aunque sea en dos frases: el coach mejora con cada registro.`});
+  const d28=E.filter(e=>now-dateTs(e)<=28*DAY);
+  if(d28.length>=2){
+    const tr=d28.filter(e=>e.type==="entreno"||e.type==="clase").length,ma=d28.length-tr;
+    I.push({tone:"info",t:`Últimas 4 semanas: ${d28.length} sesiones (${(d28.length/4).toFixed(1).replace(".",",")} por semana), ${tr} de entreno o clase y ${ma} de partido.`});
+    if(ma>=3&&tr===0)I.push({tone:"work",t:"Solo has registrado partidos últimamente. Un entreno con foco concreto acelera mucho más la mejora que jugar sin objetivo."});
+    if(tr>=4&&ma===0)I.push({tone:"info",t:"Mucho entreno y ningún partido reciente: juega alguno para comprobar si lo entrenado aguanta bajo presión."});
+  }
+  neglected.slice(0,2).forEach(x=>I.push({tone:"work",t:`Has apuntado ${x.recentWork>=3?"varias veces":"un par de veces"} que quieres trabajar ${SHOT_BY[x.id].a}, pero no ha sido el enfoque de ninguna sesión reciente.`}));
+  arr.filter(x=>x.trend===1).slice(0,2).forEach(x=>I.push({tone:"good",t:`${SHOT_BY[x.id].l}: tus últimos comentarios son claramente más positivos que los primeros. Lo que estás haciendo funciona.`}));
+  arr.filter(x=>x.trend===-1).slice(0,2).forEach(x=>I.push({tone:"bad",t:`${SHOT_BY[x.id].l}: últimamente lo describes peor que antes. Vale la pena dedicarle la próxima sesión.`}));
+  const fe=E.filter(e=>e.feel).map(e=>e.feel);
+  if(fe.length>=6){const a=fe.slice(-3),b=fe.slice(-6,-3);const av=v=>v.reduce((s,y)=>s+y,0)/v.length;const d=av(a)-av(b);
+    if(d>=.6)I.push({tone:"good",t:"Tus sensaciones de las últimas sesiones son mejores que las anteriores."});
+    else if(d<=-.6)I.push({tone:"bad",t:"Tus sensaciones han bajado en las últimas sesiones. Revisa descanso y carga: a veces una sesión suave suma más."});}
+  const lowE=E.filter(e=>e.energy&&e.energy<=2),hiE=E.filter(e=>e.energy&&e.energy>=4);
+  if(lowE.length>=2&&hiE.length>=2){const badN=v=>v.reduce((s,e)=>s+((e.points&&e.points.bad)||[]).length,0)/v.length;
+    if(badN(lowE)>=badN(hiE)*1.5+.5)I.push({tone:"work",t:"Cuando llegas con poca energía apuntas bastantes más cosas que no salen. Cuida el descanso antes de los partidos importantes."});}
+  const ment=E.slice(-6).filter(e=>((e.points&&e.points.bad)||[]).some(it=>(it.s||[]).includes("mental"))).length;
+  if(ment>=2)I.push({tone:"work",t:"La cabeza (nervios, prisa, frustración) aparece en varias sesiones recientes. Practica una rutina entre puntos: es entrenable como cualquier golpe."});
+  if(R.matches&&R.matches.n>=3){const m=R.matches;
+    if(m.streak>=3)I.push({tone:m.streakWon?"good":"bad",t:m.streakWon?`Racha de ${m.streak} partidos ganados.`:`Llevas ${m.streak} partidos perdidos seguidos; fíjate en qué se repite en "No tan bien" de esos partidos.`});
+    m.partners.forEach(p=>I.push({tone:"info",t:`Con ${p.name}: ${p.w} de ${p.n} partidos ganados (${Math.round(100*p.w/p.n)} %).`}));}
+  // plan
+  const target=(neglected[0])||R.weak[0]||arr.filter(x=>x.recentWork>0).sort((a,b)=>b.recentWork-a.recentWork)[0]||null;
+  const tid=target?target.id:"general";
+  const pool=DRILLS[tid]||DRILLS.general;
+  const k=E.length%pool.length;
+  const drills=[pool[k],pool[(k+1)%pool.length]].filter((v,i,a)=>a.indexOf(v)===i);
+  let why="";
+  if(target){
+    if(neglected[0]&&target===neglected[0])why=`Lo has apuntado como pendiente en varios registros y aún no le has dedicado una sesión.`;
+    else if(target.b)why=`Es lo que más aparece en "No tan bien" (${target.b} ${target.b===1?"vez":"veces"}${target.g?`, frente a ${target.g} en "Salió bien"`:""}), con más peso a lo reciente.`;
+    else why=`Lo tienes apuntado como pendiente.`;
+  } else why="Aún no hay un punto débil claro en tus registros: trabaja la regularidad y sigue anotando qué falla.";
+  const keep=R.strong.find(x=>!target||x.id!==target.id)||null;
+  const lastWork=((R.last.points&&R.last.points.work)||[]).slice().sort((a,b)=>(a.auto?1:0)-(b.auto?1:0)).slice(0,3).map(it=>it.t);
+  const mentalWeak=R.weak.some(x=>x.id==="mental");
+  R.plan={target:target?target.id:null,label:target?SHOT_BY[target.id].l:"Regularidad",why,drills,keep:keep?keep.id:null,lastWork,cue:mentalWeak?DRILLS.mental[0]:CUES[E.length%CUES.length]};
+  return R;
+}
+function mergeEntries(a,b){
+  const map=new Map();
+  for(const e of [...a,...b]){if(!e||!e.id)continue;const c=map.get(e.id);if(!c||(e.updatedAt||0)>(c.updatedAt||0))map.set(e.id,e)}
+  return [...map.values()];
+}
+/*PARSER-END*/
+
+(function(){
+"use strict";
+const LS="bitacora-padel-v1",LS_SET="bitacora-padel-ajustes",LS_DRAFT="bitacora-padel-borrador";
+const PREVIEW=!!window.PADEL_PREVIEW;
+const SCOPE="https://www.googleapis.com/auth/drive.file";
+const API="https://www.googleapis.com/drive/v3",UP="https://www.googleapis.com/upload/drive/v3";
+const FILE="bitacora-padel.json",FOLDER="Bitácora de Pádel";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const todayISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const nowLabel=()=>"Hoy, "+new Date().toLocaleDateString("es-ES",{day:"numeric",month:"short"})+" · "+new Date().toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"});
+const fmtWhen=e=>{const t=e.ts?new Date(e.ts):null;const sameDay=t&&e.date===(t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0"));return fmtDate(e.date)+(sameDay?" · "+t.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"}):"")};
+const fmtDate=iso=>{const t=Date.parse(iso+"T12:00:00");if(!isFinite(t))return iso||"";return new Date(t).toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short"})};
+const lsGet=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+
+let entries=lsGet(LS,[]);if(!Array.isArray(entries))entries=[];
+const settings=Object.assign({clientId:"",fileId:null,folderId:null,linked:false,lastSync:0,dirty:false,keepRaw:false},lsGet(LS_SET,{}));
+const saveSettings=()=>lsSet(LS_SET,settings);
+const saveLocal=()=>lsSet(LS,entries);
+const draft0=lsGet(LS_DRAFT,null);
+if(draft0)delete draft0.date;
+const ui={tab:"new",compose:Object.assign({text:"",type:"entreno",dur:""},draft0||{}),draft:null,editingId:null,justSaved:null,filter:"all",shot:"",open:null};
+const saveCompose=()=>{const c=ui.compose;if(c.text||c.dur)lsSet(LS_DRAFT,c);else try{localStorage.removeItem(LS_DRAFT)}catch(e){}};
+
+function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2600)}
+
+/* ---------- Google Drive ---------- */
+const Drive={tok:null,exp:0,loading:null,
+  load(){if(window.google&&google.accounts&&google.accounts.oauth2)return Promise.resolve();if(this.loading)return this.loading;
+    this.loading=new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://accounts.google.com/gsi/client";s.async=true;s.onload=()=>res();s.onerror=()=>{this.loading=null;rej(new Error("No se pudo cargar el inicio de sesión de Google (¿sin conexión?)."))};document.head.appendChild(s)});return this.loading},
+  valid(){return this.tok&&Date.now()<this.exp-60000},
+  async token(interactive){
+    if(this.valid())return this.tok;
+    if(!interactive)return null;
+    if(!settings.clientId)throw new Error("Falta el Client ID de Google. Ve a Ajustes.");
+    await this.load();
+    return new Promise((res,rej)=>{
+      const c=google.accounts.oauth2.initTokenClient({client_id:settings.clientId,scope:SCOPE,
+        callback:r=>{if(r.error){rej(new Error(r.error_description||r.error));return}this.tok=r.access_token;this.exp=Date.now()+(+r.expires_in||3600)*1000;settings.linked=true;saveSettings();res(this.tok)},
+        error_callback:e=>rej(new Error(e&&e.type==="popup_closed"?"Has cerrado la ventana de Google.":"No se pudo autorizar Google Drive."))});
+      c.requestAccessToken({prompt:settings.linked?"":"consent"});
+    });
+  }
+};
+async function gfetch(url,opt){
+  opt=opt||{};
+  const r=await fetch(url,Object.assign({},opt,{headers:Object.assign({},opt.headers||{},{Authorization:"Bearer "+Drive.tok})}));
+  if(r.status===401){Drive.tok=null;throw new Error("AUTH")}
+  if(!r.ok){let txt="";try{txt=(await r.text()).slice(0,160)}catch(e){}throw new Error("Drive "+r.status+" "+txt)}
+  return r;
+}
+async function ensureFile(){
+  if(settings.fileId){
+    try{const j=await (await gfetch(API+"/files/"+settings.fileId+"?fields=id,trashed")).json();if(!j.trashed)return settings.fileId}catch(e){if(e.message==="AUTH")throw e}
+    settings.fileId=null;
+  }
+  const q=encodeURIComponent(`name='${FILE}' and trashed=false`);
+  const j=await (await gfetch(API+"/files?q="+q+"&spaces=drive&orderBy=modifiedTime desc&fields=files(id)")).json();
+  if(j.files&&j.files.length){settings.fileId=j.files[0].id;saveSettings();return settings.fileId}
+  let folder=settings.folderId;
+  if(folder){try{const f=await (await gfetch(API+"/files/"+folder+"?fields=id,trashed")).json();if(f.trashed)folder=null}catch(e){if(e.message==="AUTH")throw e;folder=null}}
+  if(!folder){
+    const fq=encodeURIComponent(`name='${FOLDER}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+    const fj=await (await gfetch(API+"/files?q="+fq+"&fields=files(id)")).json();
+    folder=fj.files&&fj.files[0]&&fj.files[0].id;
+    if(!folder){const cr=await gfetch(API+"/files?fields=id",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:FOLDER,mimeType:"application/vnd.google-apps.folder"})});folder=(await cr.json()).id}
+    settings.folderId=folder;
+  }
+  const b="bp"+uid();
+  const body=`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify({name:FILE,mimeType:"application/json",parents:[folder]})}\r\n--${b}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(payload([]))}\r\n--${b}--`;
+  const r=await gfetch(UP+"/files?uploadType=multipart&fields=id",{method:"POST",headers:{"Content-Type":"multipart/related; boundary="+b},body});
+  settings.fileId=(await r.json()).id;saveSettings();return settings.fileId;
+}
+const payload=list=>({app:"bitacora-padel",version:1,updatedAt:new Date().toISOString(),entries:list});
+let syncing=false;
+async function sync(interactive){
+  if(PREVIEW){if(interactive)toast("En esta prueba Drive está desactivado; funcionará en la app instalada");return}
+  if(!settings.clientId){if(interactive){ui.tab="set";render();toast("Configura Google Drive para sincronizar")}return}
+  if(syncing)return;syncing=true;setSync("busy");
+  try{
+    let t=await Drive.token(interactive);if(!t){setSync();return}
+    let id;
+    try{id=await ensureFile()}catch(e){if(e.message==="AUTH"&&interactive){await Drive.token(true);id=await ensureFile()}else throw e}
+    const r=await gfetch(API+"/files/"+id+"?alt=media");
+    let remote=[];try{const j=await r.json();remote=Array.isArray(j)?j:(j.entries||[])}catch(e){}
+    entries=mergeEntries(entries,remote);saveLocal();
+    await gfetch(UP+"/files/"+id+"?uploadType=media",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload(entries))});
+    settings.lastSync=Date.now();settings.dirty=false;saveSettings();
+    setSync();render();
+    if(interactive)toast("Sincronizado con Google Drive");
+  }catch(e){
+    setSync("err");
+    if(interactive)toast(e.message==="AUTH"?"La sesión de Google ha caducado. Vuelve a tocar Sincronizar.":e.message);
+  }finally{syncing=false;if(document.querySelector("[data-syncstate]"))render()}
+}
+function setSync(state){
+  const el=$("#sync"),sp=el.querySelector("span");el.className="sync";
+  if(PREVIEW){sp.textContent="Prueba";return}
+  if(state==="busy"){sp.textContent="Sincronizando…";return}
+  if(state==="err"){el.classList.add("err");sp.textContent="Error · reintentar";return}
+  if(!settings.clientId){sp.textContent="Solo local";return}
+  if(settings.dirty||!settings.lastSync){el.classList.add("pend");sp.textContent=settings.lastSync?"Pendiente":"Conectar Drive";return}
+  el.classList.add("ok");const m=Math.round((Date.now()-settings.lastSync)/60000);
+  sp.textContent=m<1?"Drive · ahora":m<60?`Drive · ${m} min`:m<1440?`Drive · ${Math.round(m/60)} h`:"Drive · "+new Date(settings.lastSync).toLocaleDateString("es-ES",{day:"numeric",month:"short"});
+}
+function changed(){saveLocal();if(PREVIEW)return;settings.dirty=true;saveSettings();setSync();if(Drive.valid())sync(false)}
+const EXAMPLES=[[30,"entreno","Entreno con Marta. Nos hemos centrado en la bandeja. La bandeja me sale bastante bien. En la pared me precipito mucho. Tengo que trabajar las salidas de pared.",4,4],[27,"partido","Partido con Javi, perdimos 4-6 3-6. Muchos nervios. La volea de revés fatal, la mandaba a la red. El saque muy bien. Tengo que trabajar la pared.",2,3],[23,"clase","Clase de víbora. No me salía nada bien la víbora. El remate por tres entraba. Hay que seguir con la salida de pared.",3,4],[20,"partido","Partido con Javi, ganamos 6-3 6-4. La bandeja genial. Las salidas de pared regular, me precipito. Buena comunicación.",4,4],[15,"partido","Partido con Javi, perdimos 6-7 4-6. Estaba muy cansado. La volea de revés mal otra vez. Me falta físico.",2,2],[10,"entreno","Entreno con Marta. Nos hemos centrado en la volea. La volea de revés me ha salido mejor. Tengo que trabajar la pared.",4,4],[6,"partido","Partido con Javi, ganamos 6-2 6-4. La volea de revés bien. La bandeja muy bien. En la pared otra vez mal.",4,5],[3,"partido","Partido con Carlos, perdimos 3-6 6-4 4-6. Nervios al final. La pared fatal. El resto bien.",3,3]];
+function loadExamples(){const now=Date.now();EXAMPLES.forEach(([d,type,txt,feel,en],i)=>{const p=parseSession(txt);const dt=new Date(now-d*864e5);const iso=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0");entries.push({id:"ej"+i+uid(),example:true,ts:+dt,updatedAt:+dt,date:iso,type,dur:p.dur||90,partner:p.partner,result:p.result,won:p.won,feel,energy:en,points:p.points})});saveLocal()}
+
+/* ---------- Render ---------- */
+function render(){
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-current",b.dataset.tab===ui.tab?"page":"false"));
+  const app=$("#app");
+  app.innerHTML=ui.tab==="new"?(ui.draft?viewEditor():viewCompose()):ui.tab==="hist"?viewHist():ui.tab==="coach"?viewCoach():viewSettings();
+  app.querySelectorAll("textarea.it-t").forEach(autosize);
+  setSync();
+}
+function autosize(t){t.style.height="auto";t.style.height=t.scrollHeight+"px"}
+const typeChips=(cur,attr)=>`<div class="chips">${TYPES.map(([k,l])=>`<button class="chip" data-${attr}="${k}" aria-pressed="${cur===k}">${l}</button>`).join("")}</div>`;
+const GUIDE=[["Enfoque","Hoy me he centrado en "],["Bien","Me ha salido bien "],["No tan bien","Me ha costado "],["A trabajar","Tengo que trabajar "]];
+
+function viewCompose(){
+  const c=ui.compose;
+  const R=entries.some(e=>!e.deleted)?analyze(entries):null;
+  let saved="";
+  if(ui.justSaved&&R&&R.plan){
+    saved=`<div class="banner ok"><b>Registro guardado.</b> Para la próxima: ${esc(R.plan.label.toLowerCase()==="regularidad"?"trabaja la regularidad":"céntrate en "+(SHOT_BY[R.plan.target]?SHOT_BY[R.plan.target].a:R.plan.label))}. Tienes el plan en Coach.</div>`;
+  }
+  let before="";
+  if(R&&R.plan&&!ui.justSaved){
+    const lw=R.plan.lastWork;
+    before=`<div class="card"><div class="kicker">Antes de jugar</div>
+      <div><b>Foco sugerido:</b> ${esc(R.plan.label)}</div>
+      ${lw.length?`<div><div class="label" style="margin-bottom:6px">Pendiente de tu última sesión</div><ul class="dots" style="--c:var(--work)">${lw.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`:""}
+      <div class="hint">${esc(R.plan.cue)}</div></div>`;
+  }
+  const nEx=entries.filter(e=>e.example&&!e.deleted).length,nAll=entries.filter(e=>!e.deleted).length;
+  const prev=PREVIEW?`<div class="banner"><b>Versión de prueba.</b> Lo que registres se queda solo en este navegador y no se sincroniza con Drive. ${nEx?`Hay ${nEx} registros de ejemplo cargados. <button class="btn ghost small" data-act="clearEx" style="margin-top:8px">Quitar ejemplos</button>`:nAll?"":`<button class="btn ghost small" data-act="loadEx" style="margin-top:8px">Cargar 8 registros de ejemplo</button>`}</div>`:"";
+  return `<div class="view">
+  ${prev}${saved}
+  <section class="block">
+    <div class="label">Tipo de sesión</div>
+    ${typeChips(c.type,"ctype")}
+    <div class="grid2">
+      <div class="field"><span class="label">Fecha</span><div class="autodate">${esc(nowLabel())}<small>automática</small></div></div>
+      <label class="field"><span class="label">Duración (min)</span><input id="c-dur" inputmode="numeric" placeholder="90" value="${esc(c.dur)}"></label>
+    </div>
+  </section>
+  <section class="block">
+    <h2>¿Qué tal ha ido?</h2>
+    <p class="hint">Cuéntalo como te salga: en qué te has centrado, qué ha ido bien, qué no tanto y qué quieres trabajar. Si fue partido, di el resultado y con quién jugaste.</p>
+    <div class="chips">${GUIDE.map(([l,p])=>`<button class="chip ghost" data-guide="${esc(p)}">+ ${l}</button>`).join("")}</div>
+    <label class="field"><textarea class="main" id="c-text" placeholder="Hoy entreno con Marta, hora y media. Nos hemos centrado en la bandeja y la salida de pared. La bandeja me ha salido bastante bien, pero en la pared me precipitaba mucho. Tengo que trabajar el globo profundo.">${esc(c.text)}</textarea></label>
+    <div class="mic-note"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span>Para hablar en vez de escribir, usa el micrófono de tu teclado. Esta app no accede al micrófono, no graba ni guarda audio: solo trabaja con el texto.</span></div>
+    <div class="row"><button class="btn primary" data-act="organize" ${c.text.trim()?"":"disabled"}>Organizar en puntos clave</button></div>
+    <button class="btn ghost small" data-act="manual" style="align-self:flex-start">Rellenar a mano sin texto</button>
+  </section>
+  ${before}
+  </div>`;
+}
+function itemHTML(cat,it,i){
+  const opts=CATS.map(c=>`<option value="${c.k}"${c.k===cat?" selected":""}>${c.l}</option>`).join("");
+  const tags=(it.s||[]).map(id=>`<span class="tag">${esc(shotLabel(id))}</span>`).join("")+(it.auto?`<span class="tag auto">sugerido</span>`:"");
+  return `<div class="item"><textarea class="it-t" rows="1" data-edit="${cat}:${i}" placeholder="Escribe…">${esc(it.t)}</textarea><div class="it-ctl"><select data-move="${cat}:${i}" aria-label="Mover a otro grupo">${opts}</select><button class="x" data-del="${cat}:${i}" aria-label="Quitar">×</button></div>${tags?`<div class="tags">${tags}</div>`:""}${it.o&&norm(it.o)!==norm(it.t)?`<div class="said">Dijiste: «${esc(it.o)}»</div>`:""}</div>`;
+}
+function questionsHTML(d){
+  if(!d.qs||!d.qs.length)return "";
+  const pending=d.qs.filter(q=>!q.done).length;
+  return `<div class="qcard"><div class="cat-h"><span class="kicker" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);font-weight:700">Preguntas del coach</span><span class="hint">${pending?pending+" pendiente"+(pending>1?"s":""):"listo"}</span></div>
+  ${d.qs.map(q=>q.done?`<div class="q done"><b>✓</b><span>${esc(q.q)} <span style="color:var(--ink)">${esc(q.answer||"saltada")}</span></span></div>`:
+  `<div class="q"><p>${esc(q.q)}</p><div class="chips">${q.opts.map((o,j)=>`<button class="chip" data-qa="${q.i}:${j}">${esc(o)}</button>`).join("")}</div>
+   ${q.free?`<div class="qfree"><input id="qf-${q.i}" placeholder="${esc(q.free)}" enterkeyhint="done"><button class="btn ghost small" data-qsend="${q.i}">Añadir</button></div>`:""}
+   <button class="add" style="--c:var(--muted)" data-qskip="${q.i}">Saltar</button></div>`).join("")}</div>`;
+}
+function answerQ(qi,text,fromOpt){
+  const d=ui.draft,q=d.qs[qi];if(!q||!text)return;
+  text=text.charAt(0).toUpperCase()+text.slice(1);
+  const P=d.points,uidk=()=>Math.random().toString(36).slice(2,9);
+  const sh=detectShots(text);
+  if(q.kind==="result"){
+    if(fromOpt)d.won=text==="Ganado";
+    else{const r=parseSession(text);d.result=r.result||text;if(r.won!=null)d.won=r.won}
+  } else if(q.kind==="cause"){
+    const it=P.bad.find(x=>x.k===q.key);if(it){const low=text.charAt(0).toLowerCase()+text.slice(1);it.t=it.t.replace(/[\s.]+$/,"")+" — causa: "+low;
+      const w=P.work.find(x=>x.auto&&(x.s||[]).some(id=>(it.s||[]).includes(id)));if(w&&!/ — /.test(w.t))w.t+=" — corregir: "+low}
+  } else if(q.kind==="focus"){
+    P.focus.push({k:uidk(),t:fromOpt?text:summarize("focus",text,sh),o:fromOpt?"":text,s:sh});
+  } else if(q.kind==="work"){
+    const t=fromOpt?(text==="Mantener lo de hoy"?"Mantener lo que funcionó hoy":text):summarize("work",text,sh);
+    const auto=P.work.find(x=>x.auto&&x.t===text);
+    const s2=auto?auto.s:sh;
+    P.work=P.work.filter(x=>!(x.auto&&(x.s||[]).some(id=>s2.includes(id))));
+    P.work.unshift({k:uidk(),t,o:fromOpt?"":text,s:s2});
+  } else if(q.kind==="good"){
+    P.good.push({k:uidk(),t:fromOpt?text+": bien":summarize("good",text,sh),o:fromOpt?"":text,s:sh});
+  } else if(q.kind==="feel"){d.feel=+text}
+  q.done=true;q.answer=text;render();
+}
+function viewEditor(){
+  const d=ui.draft,isMatch=d.type==="partido"||d.type==="torneo";
+  const seg=(attr,val)=>`<div class="seg">${[1,2,3,4,5].map(n=>`<button data-${attr}="${n}" class="${val===n?"on":""}">${n}</button>`).join("")}</div>`;
+  const total=CATS.reduce((s,c)=>s+d.points[c.k].length,0);
+  return `<div class="view">
+  <div class="banner">${ui.editingId?"Editando registro.":total?"He resumido lo que has contado en notas. Contesta las preguntas si quieres y corrige lo que haga falta.":"Añade los puntos de la sesión."}</div>
+  ${questionsHTML(d)}
+  <section class="block">
+    ${typeChips(d.type,"dtype")}
+    <div class="grid2">
+      ${d.dateAuto?`<div class="field"><span class="label">Fecha</span><div class="autodate">${esc(nowLabel())}<button class="add" style="--c:var(--accent)" data-act="chdate">Cambiar</button></div></div>`:`<label class="field"><span class="label">Fecha</span><input type="date" id="d-date" value="${esc(d.date)}"></label>`}
+      <label class="field"><span class="label">Duración (min)</span><input id="d-dur" inputmode="numeric" value="${d.dur==null?"":d.dur}"></label>
+      <label class="field"><span class="label">Pareja</span><input id="d-partner" value="${esc(d.partner)}" placeholder="Nombre"></label>
+      ${isMatch?`<label class="field"><span class="label">Resultado</span><input id="d-result" value="${esc(d.result)}" placeholder="6-4 3-6 7-5"></label>`:`<span></span>`}
+    </div>
+    ${isMatch?`<div class="chips"><button class="chip" data-won="1" aria-pressed="${d.won===true}">Ganado</button><button class="chip" data-won="0" aria-pressed="${d.won===false}">Perdido</button><button class="chip" data-won="" aria-pressed="${d.won==null}">Sin resultado</button></div>`:""}
+  </section>
+  <section class="block">
+    <div class="label">Sensaciones</div>${seg("feel",d.feel)}<div class="scale-ends"><span>muy malas</span><span>muy buenas</span></div>
+    <div class="label">Energía física</div>${seg("energy",d.energy)}<div class="scale-ends"><span>sin pilas</span><span>a tope</span></div>
+  </section>
+  ${CATS.map(c=>`<section class="cat" style="--c:${c.c}"><div class="cat-h"><h3>${c.l}</h3><span class="n">${d.points[c.k].length||""}</span></div>
+    ${d.points[c.k].map((it,i)=>itemHTML(c.k,it,i)).join("")}
+    <button class="add" data-add="${c.k}">+ Añadir</button></section>`).join("")}
+  ${d.raw?`<details class="raw"><summary>Texto original ${settings.keepRaw?"(se guardará)":"(no se guardará)"}</summary><p>${esc(d.raw)}</p></details>`:""}
+  <div class="row"><button class="btn primary" data-act="save">${ui.editingId?"Guardar cambios":"Guardar registro"}</button></div>
+  <div class="row">${ui.editingId?"":`<button class="btn ghost small" data-act="back">Volver al texto</button>`}<button class="btn ghost small" data-act="cancel">${ui.editingId?"Cancelar":"Descartar"}</button></div>
+  </div>`;
+}
+function entryTitle(e){
+  let t=typeLabel(e.type);
+  if((e.type==="partido"||e.type==="torneo")&&e.result)t+=" · "+e.result;
+  else if(e.dur)t+=" · "+e.dur+" min";
+  return t;
+}
+function viewHist(){
+  let L=liveEntries(entries).reverse();
+  if(ui.filter!=="all")L=L.filter(e=>e.type===ui.filter);
+  if(ui.shot)L=L.filter(e=>CATS.some(c=>((e.points||{})[c.k]||[]).some(it=>(it.s||[]).includes(ui.shot))));
+  const used=new Set();liveEntries(entries).forEach(e=>CATS.forEach(c=>((e.points||{})[c.k]||[]).forEach(it=>(it.s||[]).forEach(id=>used.add(id)))));
+  const chips=`<div class="chips"><button class="chip" data-filter="all" aria-pressed="${ui.filter==="all"}">Todo</button>${TYPES.map(([k,l])=>`<button class="chip" data-filter="${k}" aria-pressed="${ui.filter===k}">${l}</button>`).join("")}</div>`;
+  const sel=used.size?`<label class="field"><select id="h-shot"><option value="">Todos los golpes y aspectos</option>${SHOTS.filter(s=>used.has(s.id)).map(s=>`<option value="${s.id}"${ui.shot===s.id?" selected":""}>${s.l}</option>`).join("")}</select></label>`:"";
+  if(!L.length)return `<div class="view">${chips}${sel}<p class="empty">${entries.some(e=>!e.deleted)?"No hay registros con este filtro.":"Aún no hay registros. Después de tu próxima sesión, cuéntala en Registrar."}</p></div>`;
+  return `<div class="view">${chips}${sel}<div class="list">${L.map(e=>{
+    const open=ui.open===e.id,P=e.points||{};
+    const sh=[...new Set(CATS.flatMap(c=>(P[c.k]||[]).flatMap(it=>it.s||[])))].slice(0,4);
+    const wl=e.won===true?`<span class="wl w">G</span>`:e.won===false?`<span class="wl l">P</span>`:"";
+    const pips=e.feel?`<span class="pips" title="Sensaciones ${e.feel}/5">${[1,2,3,4,5].map(n=>`<i class="${n<=e.feel?"on":""}"></i>`).join("")}</span>`:"";
+    return `<div class="entry"><button class="head" data-open="${e.id}" aria-expanded="${open}">
+      <span class="badge ${esc(e.type)}">${esc(typeLabel(e.type).slice(0,1))}</span>
+      <span style="min-width:0"><span class="e-title"><span>${esc(entryTitle(e))}</span><span class="e-date">${esc(fmtWhen(e))}</span></span>
+      <span class="e-sub">${wl}${pips}${e.partner?`<span>con ${esc(e.partner)}</span>`:""}${sh.map(id=>`<span class="tag">${esc(shotLabel(id))}</span>`).join("")}</span></span></button>
+      ${open?`<div class="detail">${CATS.filter(c=>(P[c.k]||[]).length).map(c=>`<div class="dgroup" style="--c:${c.c}"><h4>${c.l}</h4><ul>${P[c.k].map(it=>`<li>${esc(it.t)}</li>`).join("")}</ul></div>`).join("")}
+        ${e.energy?`<div class="hint">Energía ${e.energy}/5${e.feel?` · Sensaciones ${e.feel}/5`:""}</div>`:""}
+        ${e.raw?`<details class="raw"><summary>Texto original</summary><p>${esc(e.raw)}</p></details>`:""}
+        <div class="row"><button class="btn ghost small" data-act="edit" data-id="${e.id}">Editar</button><button class="btn danger small" data-act="del" data-id="${e.id}">Borrar</button></div></div>`:""}
+    </div>`}).join("")}</div></div>`;
+}
+function feelChart(F){
+  const pts=F.map((x,i)=>({i,v:x.f})).filter(p=>p.v);
+  if(pts.length<2)return "";
+  const W=300,H=90,px=16,py=12,n=F.length;
+  const X=i=>px+(n<=1?0:i*(W-2*px)/(n-1)),Y=v=>H-py-(v-1)*(H-2*py)/4;
+  const line=pts.map(p=>`${X(p.i).toFixed(1)},${Y(p.v).toFixed(1)}`).join(" ");
+  const grid=[1,3,5].map(v=>`<line x1="${px}" x2="${W-px}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width="1"/><text x="2" y="${Y(v)+3}">${v}</text>`).join("");
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Sensaciones de las últimas sesiones">${grid}<polyline points="${line}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>${pts.map(p=>{const t=F[p.i].t;return `<circle cx="${X(p.i)}" cy="${Y(p.v)}" r="3.5" fill="${t==="partido"||t==="torneo"?"var(--ball)":"var(--accent)"}" stroke="var(--surface)" stroke-width="1.5"/>`}).join("")}</svg>`;
+}
+function viewCoach(){
+  const R=analyze(entries);
+  if(!R.n)return `<div class="view"><h2>Tu coach</h2><p class="empty">Cuando tengas registros, aquí verás tu plan para la próxima sesión, tus puntos fuertes y débiles y cómo evolucionas. Con 3–4 registros empieza a ser útil.</p></div>`;
+  const P=R.plan;
+  const plan=`<div class="card hero"><div class="kicker">Tu próxima sesión</div>
+    <div class="big">${esc(P.label)}</div><p class="hint" style="font-size:.9rem;color:var(--ink)">${esc(P.why)}</p>
+    ${P.drills.map(d=>`<div class="drill">${esc(d)}</div>`).join("")}
+    ${P.keep?`<div class="hint">Y no pierdas lo que funciona: dedica unos minutos del calentamiento a ${esc(SHOT_BY[P.keep].a)}.</div>`:""}
+    ${P.lastWork.length?`<div><div class="label" style="margin-bottom:6px">Lo que te apuntaste la última vez</div><ul class="dots" style="--c:var(--work)">${P.lastWork.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`:""}
+    <div style="border-top:1px dashed var(--line);padding-top:10px"><span class="label">Clave mental</span><div style="margin-top:4px">${esc(P.cue)}</div></div></div>`;
+  const mx=Math.max(1,...R.shots.map(x=>Math.max(x.gw,x.bw)));
+  const shots=R.shots.length?`<div class="card"><h2>Golpes y aspectos</h2><div class="legend"><span>← no tan bien</span><span>salió bien →</span></div>
+    ${R.shots.slice(0,10).map(x=>`<div class="shotrow"><span>${esc(shotLabel(x.id))}</span><div class="dv"><span class="l"><i style="width:${(100*x.bw/mx).toFixed(0)}%"></i></span><span class="r"><i style="width:${(100*x.gw/mx).toFixed(0)}%"></i></span></div><span class="trend ${x.trend>0?"up":x.trend<0?"down":""}">${x.trend>0?"▲ mejora":x.trend<0?"▼ baja":`+${x.g} / −${x.b}`}</span></div>`).join("")}
+    <p class="hint">Pesa más lo reciente (lo de hace un mes cuenta la mitad). A la derecha: veces que salió bien / no tan bien, o la tendencia si la hay.</p></div>`:"";
+  const fc=feelChart(R.feel);
+  const feel=fc?`<div class="card"><h2>Sensaciones</h2>${fc}<p class="hint">Últimas ${R.feel.length} sesiones. Amarillo: partidos.</p></div>`:"";
+  const M=R.matches;
+  const matches=M?`<div class="card"><h2>Partidos</h2><div class="stats"><div class="stat"><b>${M.n}</b><span>jugados</span></div><div class="stat"><b>${M.pct} %</b><span>ganados</span></div><div class="stat"><b>${M.streak}</b><span>${M.streakWon?"racha ganando":"racha perdiendo"}</span></div></div>
+    <div class="e-sub">${M.last.map(w=>`<span class="wl ${w?"w":"l"}">${w?"G":"P"}</span>`).join("")}</div></div>`:"";
+  const ins=R.insights.length?`<div class="card"><h2>Observaciones</h2><ul class="ins">${R.insights.map(x=>`<li class="${x.tone}">${esc(x.t)}</li>`).join("")}</ul></div>`:"";
+  return `<div class="view">${plan}${ins}${shots}${feel}${matches}<p class="hint">El análisis se hace en tu móvil a partir de tus registros. No se envía a ningún servicio de IA.</p></div>`;
+}
+function viewSettings(){
+  const n=entries.filter(e=>!e.deleted).length;
+  const origin=location.origin&&location.origin!=="null"?location.origin:"(la dirección donde publiques la app)";
+  return `<div class="view">
+  ${PREVIEW?`<div class="banner">En esta versión de prueba Google Drive, exportar e instalar no funcionan. Todo lo demás es igual que en la app instalada.</div>`:""}
+  <div class="card"><h2>Google Drive</h2>
+    <div class="kv"><span>Estado</span><b>${!settings.clientId?"Sin configurar":settings.lastSync?"Conectado":"Configurado, sin conectar"}</b>
+    ${settings.lastSync?`<span>Última sinc.</span><b>${new Date(settings.lastSync).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</b>`:""}
+    <span>Archivo</span><b>${esc(FOLDER)} / ${esc(FILE)}</b></div>
+    <label class="field"><span class="label">Client ID de Google (OAuth)</span><input id="s-cid" value="${esc(settings.clientId)}" placeholder="1234…apps.googleusercontent.com" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+    <div class="row"><button class="btn primary small" data-act="connect">${settings.lastSync?"Sincronizar ahora":"Guardar y conectar"}</button>${settings.linked?`<button class="btn ghost small" data-act="unlink">Desconectar</button>`:""}</div>
+    <details class="raw"><summary>Cómo conseguir el Client ID</summary>
+    <ol class="steps" style="margin-top:8px"><li>En <b>console.cloud.google.com</b> crea un proyecto (o usa el de la Bitácora de Café).</li><li>Activa la <b>Google Drive API</b>.</li><li>Configura la pantalla de consentimiento (tipo Externo, en modo prueba) y añádete como usuario de prueba.</li><li>Credenciales → Crear ID de cliente OAuth → <b>Aplicación web</b>. En «Orígenes de JavaScript autorizados» añade <code>${esc(origin)}</code>.</li><li>Copia el ID de cliente aquí y pulsa conectar. Usa el mismo ID en todos tus dispositivos.</li></ol></details>
+    <p class="hint">La app solo puede ver los archivos que ella misma crea en tu Drive (permiso <code>drive.file</code>).</p>
+  </div>
+  <div class="card"><h2>Privacidad</h2>
+    <ul class="dots"><li>La app no pide acceso al micrófono, no graba audio y no guarda grabaciones. Si dictas, lo hace el teclado de tu móvil y aquí solo llega el texto.</li><li>No hay IA externa: la organización en puntos y el coach funcionan dentro de la app.</li><li>Tus registros viven en este dispositivo y, si lo conectas, en tu Google Drive. Nada más.</li></ul>
+    <label class="switch"><input type="checkbox" id="s-raw" ${settings.keepRaw?"checked":""}><span>Guardar también el texto completo que escribo o dicto (por defecto solo se guardan los puntos clave).</span></label>
+  </div>
+  <div class="card"><h2>Datos</h2><p class="hint">${n} registro${n===1?"":"s"} en este dispositivo.</p>
+    <div class="row"><button class="btn ghost small" data-act="export">Exportar copia (.json)</button><button class="btn ghost small" data-act="import">Importar copia</button></div></div>
+  <div class="card"><h2>Instalar en el móvil</h2><ul class="dots"><li><b>Android (Chrome):</b> menú ⋮ → Instalar aplicación o Añadir a pantalla de inicio.</li><li><b>iPhone (Safari):</b> botón Compartir → Añadir a pantalla de inicio.</li></ul></div>
+  </div>`;
+}
+
+/* ---------- Acciones ---------- */
+function newDraft(parsed,raw){
+  const c=ui.compose;
+  const p=parsed||{type:null,dur:null,partner:"",result:"",won:null,points:{focus:[],good:[],bad:[],work:[],other:[]}};
+  return {id:null,dateAuto:true,date:todayISO(),type:c.type||p.type||"entreno",dur:c.dur?(parseInt(c.dur,10)||null):p.dur,partner:p.partner||"",result:p.result||"",won:p.won,feel:null,energy:null,points:p.points,raw:raw||""};
+}
+function organize(){
+  const c=ui.compose,text=c.text.trim();if(!text)return;
+  const p=parseSession(text);
+  if(p.type&&!ui.compose.typeTouched)c.type=p.type;
+  ui.draft=newDraft(p,text);
+  if(!c.dur&&p.dur)ui.draft.dur=p.dur;
+  CATS.forEach(cc=>ui.draft.points[cc.k].forEach(it=>it.k=Math.random().toString(36).slice(2,9)));
+  ui.draft.qs=buildQuestions(ui.draft);
+  ui.editingId=null;ui.justSaved=null;render();window.scrollTo(0,0);
+}
+function saveDraft(){
+  const d=ui.draft;const now=Date.now();
+  const points={};
+  CATS.forEach(c=>{points[c.k]=(d.points[c.k]||[]).map(it=>{const t=String(it.t||"").trim();const o=settings.keepRaw&&it.o?it.o:undefined;
+    const sh=it.ed||!it.s?detectShots(t+" "+(it.ed?"":(it.o||""))):[...new Set([...(it.s||[]),...detectShots(t)])];
+    return {t,s:sh,auto:it.auto?true:undefined,o}}).filter(it=>it.t)});
+  const base=ui.editingId?entries.find(e=>e.id===ui.editingId):null;
+  if(d.dateAuto)d.date=todayISO();
+  const e={id:ui.editingId||uid(),ts:base?base.ts:now,updatedAt:now,date:d.date||todayISO(),type:d.type,dur:d.dur||null,partner:(d.partner||"").trim(),result:(d.type==="partido"||d.type==="torneo")?(d.result||"").trim():"",won:(d.type==="partido"||d.type==="torneo")?d.won:null,feel:d.feel||null,energy:d.energy||null,points};
+  if(settings.keepRaw&&d.raw)e.raw=d.raw;
+  if(base&&base.raw&&settings.keepRaw&&!e.raw)e.raw=base.raw;
+  entries=entries.filter(x=>x.id!==e.id);entries.push(e);
+  if(!ui.editingId){ui.compose={text:"",type:"entreno",dur:""};saveCompose();ui.justSaved=e.id}
+  else{ui.tab="hist";ui.open=e.id}
+  ui.draft=null;ui.editingId=null;
+  changed();render();window.scrollTo(0,0);toast("Guardado");
+}
+function getRef(s){const [cat,i]=s.split(":");return [cat,+i]}
+// Confirmación en dos toques (sin diálogos del navegador)
+function armed(b,msg){if(b.dataset.armed==="1"){b.dataset.armed="";return true}b.dataset.armed="1";b.dataset.orig=b.textContent;b.textContent=msg;clearTimeout(b._t);b._t=setTimeout(()=>{if(b.isConnected){b.dataset.armed="";b.textContent=b.dataset.orig}},3500);return false}
+
+document.addEventListener("click",ev=>{
+  const b=ev.target.closest("button");if(!b)return;
+  const ds=b.dataset;
+  if(ds.tab){ui.tab=ds.tab;ui.justSaved=null;render();window.scrollTo(0,0);return}
+  if(ds.ctype){ui.compose.type=ds.ctype;ui.compose.typeTouched=true;saveCompose();document.querySelectorAll("[data-ctype]").forEach(x=>x.setAttribute("aria-pressed",x===b));return}
+  if(ds.dtype){ui.draft.type=ds.dtype;render();return}
+  if(ds.guide!==undefined){const ta=$("#c-text");const cur=ta.value;ta.value=cur+(cur&&!/[\s]$/.test(cur)?(/[.!?]$/.test(cur.trim())?" ":". "):"")+ds.guide;ui.compose.text=ta.value;saveCompose();ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);$("[data-act=organize]").disabled=!ta.value.trim();return}
+  if(ds.feel){ui.draft.feel=ui.draft.feel===+ds.feel?null:+ds.feel;render();return}
+  if(ds.energy){ui.draft.energy=ui.draft.energy===+ds.energy?null:+ds.energy;render();return}
+  if(ds.won!==undefined){ui.draft.won=ds.won===""?null:ds.won==="1";render();return}
+  if(ds.del){const [c,i]=getRef(ds.del);ui.draft.points[c].splice(i,1);render();return}
+  if(ds.add){ui.draft.points[ds.add].push({t:"",s:[]});render();const tas=document.querySelectorAll(`[data-edit^="${ds.add}:"]`);const t=tas[tas.length-1];if(t)t.focus();return}
+  if(ds.qa){const [qi,j]=ds.qa.split(":").map(Number);const q=ui.draft.qs[qi];answerQ(qi,q.opts[j],true);return}
+  if(ds.qsend){const inp=$("#qf-"+ds.qsend);const v=inp&&inp.value.trim();if(v)answerQ(+ds.qsend,v,false);return}
+  if(ds.qskip){const q=ui.draft.qs[+ds.qskip];q.done=true;q.answer="";render();return}
+  if(ds.open){ui.open=ui.open===ds.open?null:ds.open;render();return}
+  if(ds.filter){ui.filter=ds.filter;render();return}
+  const act=ds.act;if(!act)return;
+  if(act==="sync"){sync(true);return}
+  if(act==="organize"){organize();return}
+  if(act==="chdate"){ui.draft.dateAuto=false;ui.draft.date=todayISO();render();const i=$("#d-date");if(i)i.focus();return}
+  if(act==="manual"){ui.draft=newDraft(null,"");ui.editingId=null;ui.justSaved=null;render();return}
+  if(act==="save"){saveDraft();return}
+  if(act==="back"){ui.draft=null;render();return}
+  if(act==="cancel"){if(ui.editingId){ui.draft=null;ui.editingId=null;ui.tab="hist";render();return}if(!armed(b,"Toca otra vez para descartar"))return;ui.draft=null;render();return}
+  if(act==="edit"){const e=entries.find(x=>x.id===ds.id);if(!e)return;ui.draft=JSON.parse(JSON.stringify(Object.assign({points:{}},e)));CATS.forEach(c=>{ui.draft.points[c.k]=ui.draft.points[c.k]||[]});ui.editingId=e.id;ui.tab="new";render();window.scrollTo(0,0);return}
+  if(act==="del"){if(!armed(b,"¿Seguro? Toca otra vez"))return;const e=entries.find(x=>x.id===ds.id);if(e){e.deleted=true;e.points={focus:[],good:[],bad:[],work:[],other:[]};delete e.raw;e.updatedAt=Date.now()}changed();render();toast("Registro borrado");return}
+  if(act==="connect"){const v=($("#s-cid").value||"").trim();if(v!==settings.clientId){settings.clientId=v;settings.fileId=null;settings.folderId=null;settings.lastSync=0;settings.linked=false;Drive.tok=null;saveSettings()}if(!v){toast("Pega primero el Client ID");return}sync(true);return}
+  if(act==="unlink"){try{if(Drive.tok&&window.google)google.accounts.oauth2.revoke(Drive.tok,()=>{})}catch(e){}Drive.tok=null;settings.linked=false;settings.lastSync=0;settings.fileId=null;saveSettings();render();toast("Desconectado. Tus datos siguen en este dispositivo y en Drive.");return}
+  if(act==="export"){const blob=new Blob([JSON.stringify(payload(entries),null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="bitacora-padel-"+todayISO()+".json";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);return}
+  if(act==="loadEx"){loadExamples();render();toast("Ejemplos cargados: mira Coach e Historial");return}
+  if(act==="clearEx"){entries=entries.filter(e=>!e.example);saveLocal();render();toast("Ejemplos quitados");return}
+  if(act==="import"){$("#importFile").click();return}
+});
+document.addEventListener("input",ev=>{
+  const t=ev.target;
+  if(t.id==="c-text"){ui.compose.text=t.value;saveCompose();const b=$("[data-act=organize]");if(b)b.disabled=!t.value.trim();return}
+  if(t.id==="c-dur"){ui.compose.dur=t.value.replace(/[^\d]/g,"");saveCompose();return}
+  if(t.dataset&&t.dataset.edit){const [c,i]=getRef(t.dataset.edit);const it=ui.draft.points[c][i];if(it){it.t=t.value;it.auto=false;it.ed=true}autosize(t);return}
+  if(!ui.draft)return;
+  if(t.id==="d-date")ui.draft.date=t.value;
+  else if(t.id==="d-dur")ui.draft.dur=parseInt(t.value,10)||null;
+  else if(t.id==="d-partner")ui.draft.partner=t.value;
+  else if(t.id==="d-result")ui.draft.result=t.value;
+});
+document.addEventListener("change",ev=>{
+  const t=ev.target;
+  if(t.dataset&&t.dataset.move){const [c,i]=getRef(t.dataset.move);const it=ui.draft.points[c].splice(i,1)[0];if(it){if(t.value==="work")it.auto=false;ui.draft.points[t.value].push(it)}render();return}
+  if(t.id==="h-shot"){ui.shot=t.value;render();return}
+  if(t.id==="s-raw"){settings.keepRaw=t.checked;saveSettings();return}
+  if(t.id==="importFile"&&t.files&&t.files[0]){const f=t.files[0];f.text().then(txt=>{const j=JSON.parse(txt);const list=Array.isArray(j)?j:(j.entries||[]);if(!Array.isArray(list))throw new Error();const before=entries.length;entries=mergeEntries(entries,list);changed();render();toast(`Importado (${entries.length-before} nuevos)`)}).catch(()=>toast("Ese archivo no es una copia válida"));t.value="";}
+});
+document.addEventListener("keydown",ev=>{const t=ev.target;if(ev.key==="Enter"&&t.id&&t.id.startsWith("qf-")){ev.preventDefault();const v=t.value.trim();if(v)answerQ(+t.id.slice(3),v,false)}});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&Drive.valid())sync(false)});
+
+if(settings.clientId&&!PREVIEW)Drive.load().catch(()=>{});
+if(!PREVIEW&&"serviceWorker" in navigator&&(location.protocol==="https:"||location.hostname==="localhost"||location.hostname==="127.0.0.1")){navigator.serviceWorker.register("sw.js").catch(()=>{})}
+render();
+})();
+</script>
+</body>
+</html>
