@@ -1,6 +1,6 @@
 // Bitácora de Pádel — service worker: permite abrir la app sin conexión.
 // No intercepta las llamadas a Google (inicio de sesión ni Drive).
-const CACHE = "bitacora-padel-v2";
+const CACHE = "bitacora-padel-v3";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {

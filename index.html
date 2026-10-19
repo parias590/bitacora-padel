@@ -161,7 +161,7 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:7px;heigh
 .links a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;color:var(--accent);font-weight:600;text-decoration:none;font-size:.9rem;background:var(--bg)}
 .links a::after{content:"↗";font-weight:700}
 .sub-h{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700;margin-bottom:6px}
-.pcard{--c1:#C8956A;--c2:#7A4E2D;--cink:#2A1708;position:relative;max-width:300px;width:100%;margin:0 auto;aspect-ratio:3/4.1;border-radius:22px 22px 26px 26px;padding:22px 20px 18px;color:var(--cink);
+.pcard{--c1:#3C74B8;--c2:#0F3563;--cink:#F4F8EC;position:relative;max-width:300px;width:100%;margin:0 auto;border-radius:22px 22px 26px 26px;padding:22px 20px 18px;color:var(--cink);
   background:linear-gradient(155deg,var(--c1),var(--c2));box-shadow:0 10px 30px rgba(0,0,0,.18),inset 0 0 0 2px rgba(255,255,255,.35);display:flex;flex-direction:column;overflow:hidden}
 .pcard::before{content:"";position:absolute;inset:-40% -60% auto auto;width:120%;height:90%;background:radial-gradient(closest-side,rgba(255,255,255,.35),transparent);pointer-events:none}
 .pcard.plata{--c1:#E4E8EC;--c2:#8E98A3;--cink:#1B232B}
@@ -177,7 +177,8 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:7px;heigh
 .pc-ball::before{left:-52px}.pc-ball::after{right:-52px}
 .pc-tier{position:absolute;right:0;bottom:-18px;font-size:.62rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
 .pc-name{font-family:var(--display);font-weight:700;font-size:1.45rem;text-align:center;text-transform:uppercase;letter-spacing:.02em;margin:26px 0 8px;padding-bottom:8px;border-bottom:1.5px solid color-mix(in srgb,var(--cink) 35%,transparent);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pc-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;margin-top:auto}
+.pc-sep{margin:26px 0 14px;border-bottom:1.5px solid color-mix(in srgb,var(--cink) 35%,transparent)}
+.pc-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px}
 .pc-stats div{display:flex;align-items:baseline;gap:8px;font-variant-numeric:tabular-nums}
 .pc-stats b{font-family:var(--display);font-size:1.35rem;font-weight:700;min-width:2.3ch;text-align:right}
 .pc-stats span{font-size:.82rem;font-weight:800;letter-spacing:.08em}
@@ -187,8 +188,15 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:7px;heigh
 .radar .val{fill:var(--ink);font-weight:700}
 .rleg{display:flex;justify-content:center;gap:14px;font-size:.76rem;color:var(--muted);flex-wrap:wrap}
 .rleg span{display:inline-flex;gap:6px;align-items:center}.rleg i{width:14px;height:3px;border-radius:2px;display:inline-block}
-.skrow{display:grid;grid-template-columns:2.6rem minmax(0,1fr) 2.4rem;gap:4px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
-.skrow:first-of-type{border-top:0}
+.skwrap{border-top:1px solid var(--line)}
+.skwrap:first-child{border-top:0}
+.skrow{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:grid;grid-template-columns:2.6rem minmax(0,1fr) 2.4rem 1rem;gap:4px 10px;align-items:center;padding:12px 0}
+.skrow:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.skrow .chev{grid-row:1;grid-column:4;color:var(--muted);font-size:1.3rem;line-height:1;transition:transform .15s;text-align:center}
+.skwrap.open .chev{transform:rotate(90deg)}
+.sk-tags{margin:0 0 12px 2.6rem;padding-left:10px;border-left:2px solid var(--line)}
+.sk-tags .trow:last-child{border-bottom:0}
+.trate{font-family:var(--display);font-weight:700;color:var(--accent);margin-left:4px;font-variant-numeric:tabular-nums}
 .skrow .ab{font-weight:800;font-size:.8rem;letter-spacing:.06em;color:var(--muted)}
 .skrow .nm{font-weight:700;font-size:.92rem;display:flex;justify-content:space-between;gap:8px}
 .skrow .nm em{font-style:normal;font-size:.74rem;font-weight:700}
@@ -196,19 +204,43 @@ ul.dots li::before{content:"";position:absolute;left:0;top:.55em;width:7px;heigh
 .skrow .v{font-family:var(--display);font-weight:700;font-size:1.25rem;text-align:right;font-variant-numeric:tabular-nums}
 .skbar{grid-column:2/3;height:8px;border-radius:4px;background:var(--sunk);overflow:hidden}
 .skbar i{display:block;height:100%;border-radius:4px}
-.sktags{grid-column:2/-1;font-size:.76rem;color:var(--muted)}
+.sktags{grid-column:2/4;font-size:.76rem;color:var(--muted)}
 .lv-low{background:var(--bad)}.lv-mid{background:var(--work)}.lv-good{background:var(--good)}.lv-top{background:var(--accent)}
 .sidechips .chip{font-size:.82rem;padding:6px 11px}
 .book{background:color-mix(in srgb,var(--ball) 22%,var(--surface));border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:.9rem}
 .book ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
 .book small{font-size:.72rem;color:var(--muted)}
 .card.tac{background:color-mix(in srgb,var(--ball) 16%,var(--surface));border-color:color-mix(in srgb,var(--ball) 55%,var(--line))}
+.psec{display:flex;flex-direction:column;gap:8px}
+.psec .sub-h{margin-bottom:0}
+.psec .drill{position:relative;padding-left:28px}
+.psec .drill::before{content:"";position:absolute;left:12px;top:calc(10px + .62em);width:6px;height:6px;border-radius:50%;background:var(--ink)}
+.drill .tag{display:inline-block;margin-left:4px;vertical-align:1px;background:var(--surface)}
+.tacbox{padding:12px 14px;gap:10px;border:1px solid color-mix(in srgb,var(--ball) 55%,var(--line))}
 .tac-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
 .tac-list li{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding-left:16px;position:relative;font-size:.93rem}
 .tac-list li::before{content:"";position:absolute;left:0;top:.5em;width:7px;height:7px;border-radius:50%;background:var(--ink)}
 .hl-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;max-height:420px;overflow:auto}
 .hl-list li{display:flex;flex-direction:column;gap:4px;font-size:.88rem;padding-bottom:10px;border-bottom:1px solid var(--line)}
 .hl-list .tags{display:flex;gap:4px;flex-wrap:wrap}
+.x.mv{display:grid;place-items:center}
+.x.mv svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.item.moving{border-color:var(--c)}
+.item.moving .x.mv{color:var(--c);background:var(--sunk)}
+.movebar{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px 0 2px}
+.movebar>span{font-size:.74rem;color:var(--muted);font-weight:600;margin-right:2px}
+.movebar .chip{font-size:.8rem;padding:5px 11px;border-color:var(--mc);color:var(--mc);background:var(--surface)}
+.kp-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:-8px}
+.voicebtn{display:flex;align-items:center;gap:12px;width:100%;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:14px;text-align:left}
+.voicebtn .mic{width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.voicebtn .mic svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.voicebtn b{display:block;font-size:1rem}
+.voicebtn small{display:block;color:var(--muted);font-size:.8rem;margin-top:2px}
+.voicebtn.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.voicebtn.on .mic{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+@media (prefers-reduced-motion:reduce){.voicebtn.on .mic{animation:none}}
+#v-text{position:fixed;left:16px;bottom:calc(90px + env(safe-area-inset-bottom,0px));width:2px;height:2px;opacity:0;border:0;padding:0;font-size:16px;resize:none;z-index:-1}
 .said{grid-column:1/-1;font-size:.76rem;color:var(--muted);font-style:italic}
 .qcard{background:var(--surface);border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:14px}
 .q{display:flex;flex-direction:column;gap:8px}
@@ -291,7 +323,7 @@ nav.tabs button[aria-current="page"]{color:var(--accent)}
     <button data-tab="new"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></svg>Registrar</button>
     <button data-tab="hist"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4"/></svg>Historial</button>
     <button data-tab="coach"><svg viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M6 15l4-5 3 3 5-7"/><circle cx="18" cy="6" r="1.2"/></svg>Coach</button>
-    <button data-tab="rank"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7M10 17h4v3h-4z"/></svg>Ranking</button>
+    <button data-tab="rank"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7M10 17h4v3h-4z"/></svg>Valoración</button>
     <button data-tab="set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>Ajustes</button>
   </div>
 </nav>
@@ -566,13 +598,13 @@ const CAUSES={
  comunicacion:["Bolas al centro","Cambios de lado","No nos hablábamos","Táctica distinta"],
  general:["Técnica","Colocación","Decisión del golpe","Cabeza"]
 };
-function articleFor(it){const id=(it.s||[])[0];const sub=subjectOf(it.o||it.t,it.s||[]);if(!id||!sub)return "eso";if(!SHOT_BY[id])return "«"+sub+"»";const art=SHOT_BY[id].a.split(" ")[0];return art+" "+sub.charAt(0).toLowerCase()+sub.slice(1)}
+function articleFor(it){const id=(it.s||[])[0];const sub=subjectOf(it.o||it.t,it.s||[]);if(!id||!sub)return "eso";if(!SHOT_BY[id])return "«"+sub+"»";if(norm(sub)===norm(SHOT_BY[id].l))return SHOT_BY[id].a;const art=SHOT_BY[id].a.split(" ")[0];return art+" "+sub.charAt(0).toLowerCase()+sub.slice(1)}
 function buildQuestions(d){
-  const Q=[],P=d.points,isMatch=d.type==="partido"||d.type==="torneo";
+  const Q=[],P=d.points,isMatch=d.type==="torneo";
   const mentioned=[...new Set(CATS.flatMap(c=>P[c.k].flatMap(it=>it.s||[])))];
   if(isMatch&&d.won==null&&!d.result)Q.push({kind:"result",q:"¿Cómo quedó el partido?",opts:["Ganado","Perdido"],free:"Resultado, p. ej. 6-4 6-3"});
   const bad=P.bad.find(it=>(it.s||[]).length);
-  if(bad){const id=bad.s[0];Q.push({kind:"cause",key:bad.k,q:`¿Por qué crees que fallaba ${articleFor(bad)}?`,opts:CAUSES[id]||CAUSES.general,free:"Otra causa"})}
+  if(bad){const id=bad.s[0];Q.push({kind:"cause",key:bad.k,q:`¿Qué crees que fallaba en ${articleFor(bad)}?`,opts:CAUSES[id]||CAUSES.general,free:"Otra causa"})}
   else if(P.bad.length)Q.push({kind:"cause",key:P.bad[0].k,q:`Sobre «${P.bad[0].t}»: ¿qué fallaba sobre todo?`,opts:CAUSES.general,free:"Otra causa"});
   if(!P.focus.length)Q.push({kind:"focus",q:"¿En qué querías centrarte hoy?",opts:[...mentioned.slice(0,3).map(shotLabel),"Sin objetivo concreto"],free:"Otro objetivo"});
   if(!P.work.some(it=>!it.auto))Q.push({kind:"work",q:"¿Qué te llevas para la próxima sesión?",opts:[...P.work.filter(it=>it.auto).map(it=>it.t).slice(0,3),"Mantener lo de hoy"],free:"Otra cosa"});
@@ -642,19 +674,19 @@ function calcRating(R){
 }
 // Ideas de tu libro, resumidas con mis palabras a partir de tus subrayados
 const BOOK_SRC="The Padel Player's Guide · Sandy Farquharson";
-const BOOK={
- pared:["Como norma, si la bola bota pasada la línea de saque, déjala rebotar en el cristal de fondo antes de golpearla."],
- defensa:["Desde el fondo juega seguro: ahí no se trata de ganar el punto, sino de no fallar y preparar la subida a la red.","Si la bola bota pasada la línea de saque, deja que salga del cristal de fondo."],
- posicion:["Subid juntos y bajad juntos: tu pareja y tú os movéis como un bloque.","Tu primer objetivo en cada punto es ganar la red. Si estás empezando, cuenta como un éxito cada vez que echas atrás a los rivales y os quedáis arriba.","Cuando saca tu pareja, colócate en la red a la altura del segundo poste y un paso por delante: es tu posición neutra para ir hacia delante o hacia atrás."],
- ataque:["Se gana desde la red. Una vez arriba, aguanta la posición hasta tener una bola para definir o hasta que el rival falle."],
- volea:["Con la red ganada no hay prisa: mantén la posición con voleas seguras hasta que llegue la bola para definir o el error del rival."],
- globo:["Cede la red solo ante un buen globo; y en cuanto la pierdas, tu siguiente objetivo es volver a ganarla.","Si tu pareja saca flojo y ves que el rival va a globear, da un paso atrás para estar preparado."],
- saque:["Saca a la diagonal desde detrás de la línea y sube a la red nada más sacar, sin quedarte mirando la bola: el saque es una ventaja, aprovéchala.","Cuando saca tu pareja: si el saque es bueno, da un paso adelante y sé agresivo; si es flojo y se espera globo, da un paso atrás."],
- resto:["Para restar, colócate detrás de la línea de saque y un paso por detrás de la unión entre el primer y el segundo cristal.","Cuando resta tu pareja, acércate un paso al centro y canta tú si la bola entra o sale. Cuando haya restado, vuelve a tu posición."],
- comunicacion:["Cuando resta tu pareja, canta tú si la bola es buena o fuera: así solo tiene que pensar en devolverla.","Subid y bajad a la vez: moveos como un bloque."],
- mental:["Un recordatorio para tu libreta: se gana desde la red, desde el fondo se juega seguro."],
- general:["Se gana desde la red; desde el fondo, juega seguro.","Ganar la red es el primer objetivo de cada punto; una vez arriba, mantenla hasta poder definir."]
-};
+// Cada idea aparece una sola vez y se asocia a varios tags
+const BOOK_IDEAS=[
+ {t:"Como norma, si la bola bota pasada la línea de saque, déjala rebotar en el cristal de fondo antes de golpearla.",tags:["pared","defensa"]},
+ {t:"Tu primer objetivo en cada punto es ganar la red. Si estás empezando, cuenta como un éxito cada vez que echas atrás a los rivales y os quedáis arriba.",tags:["posicion","general"]},
+ {t:"Se gana desde la red; desde el fondo se juega seguro: ahí no se trata de ganar el punto, sino de no fallar y preparar la subida.",tags:["ataque","defensa","mental","general"]},
+ {t:"Con la red ganada no hay prisa: mantén la posición con voleas seguras hasta tener una bola para definir o hasta que el rival falle.",tags:["volea","ataque"]},
+ {t:"Cede la red solo ante un buen globo; y en cuanto la pierdas, tu siguiente objetivo es volver a ganarla.",tags:["globo","posicion"]},
+ {t:"Subid juntos y bajad juntos: tu pareja y tú os movéis como un bloque.",tags:["posicion","comunicacion"]},
+ {t:"Saca a la diagonal desde detrás de la línea y sube a la red nada más sacar, sin quedarte mirando la bola: el saque es una ventaja.",tags:["saque"]},
+ {t:"Cuando saca tu pareja, colócate en la red a la altura del segundo poste y un paso por delante. Si el saque es bueno, da un paso adelante y sé agresivo; si es flojo y se espera globo, da un paso atrás.",tags:["saque","posicion","globo"]},
+ {t:"Para restar, colócate detrás de la línea de saque y un paso por detrás de la unión entre el primer y el segundo cristal.",tags:["resto"]},
+ {t:"Cuando resta tu pareja, acércate un paso al centro y canta tú si la bola entra o sale: así solo tiene que pensar en devolverla. Después, vuelve a tu posición.",tags:["resto","comunicacion"]}
+];
 // Subrayados importados desde Kindle (se muestran tal cual, en su idioma)
 let BOOK_IMPORTED=[];
 const EN_TAGS={globo:["lob","lobs","lobbing"],posicion:["net position","the net","at the net","come forward","move forward","move backwards","positioning","position"],
@@ -666,7 +698,7 @@ const EN_RE=Object.entries(EN_TAGS).map(([id,w])=>[id,new RegExp("(?:^|[^a-z])(?
 function tagsForHighlight(text){const n=norm(text);const out=new Set(detectTags(text));EN_RE.forEach(([id,re])=>{if(re.test(n))out.add(id)});return [...out]}
 // Subrayados ya resumidos en la app (para no duplicarlos al importar el mismo archivo)
 const BOOK_CURATED=["as a guideline, let any ball that","come forward and move backwards","write this in your journal as a","gaining the net position is your","you're serving: stand behind the","you’re serving: stand behind the"];
-function bookFor(id){const c=BOOK[id]||[];const imp=BOOK_IMPORTED.filter(h=>(h.tags||[]).includes(id)).map(h=>h.t);const all=[...c,...imp];return all.length?all:null}
+function bookFor(id){const c=BOOK_IDEAS.filter(x=>x.tags.includes(id)).map(x=>x.t);const imp=BOOK_IMPORTED.filter(h=>(h.tags||[]).includes(id)).map(h=>h.t);const all=[...c,...imp];return all.length?all:null}
 const DRILL_CUSTOM="Dedica el enfoque de la próxima sesión a esto con un objetivo medible (por ejemplo, 8 de 10 bien) y anota al final qué ha cambiado.";
 const DRILLS={
  bandeja:["Bandeja controlada: 3 series de 10 bandejas cruzadas a partir de globos; objetivo, que bote antes de la reja lateral y te deje volver a la red.","Bandeja + recuperar red: tras cada bandeja, dos pasos adelante y para una volea. Calidad antes que potencia.","Dianas: coloca un cono en la esquina del rival y cuenta aciertos sobre 20 bandejas. Apunta el porcentaje en la entrada."],
@@ -688,7 +720,7 @@ const DRILLS={
  comunicacion:["Habla en cada bola: «mía», «tuya», «sube», «atrás». Pide a tu pareja que te lo puntúe al final.","Antes de jugar, acordad quién coge las bolas al centro y quién manda en los globos."],
  general:["Calentamiento con objetivo: 10 minutos de voleas y bandejas buscando 20 bolas seguidas sin fallo.","Juego a puntos con un solo objetivo táctico (por ejemplo, jugar al centro) y anótalo al terminar."]
 };
-const CUES=["Gana desde la red, juega seguro desde el fondo (tu libro).","Antes de cada saque, decide a dónde vas a jugar la primera bola.","Si dudas, juega al centro: reduce errores y genera confusión.","Tras un error, una respiración larga y bola segura en el punto siguiente.","Habla con tu pareja después de cada punto, aunque sea una palabra.","Mira la bola hasta el impacto en los golpes por arriba.","Pies activos: split-step en cada golpe del rival."];
+const CUES=["Antes de cada saque, decide a dónde vas a jugar la primera bola.","Si dudas, juega al centro: reduce errores y genera confusión.","Tras un error, una respiración larga y bola segura en el punto siguiente.","Habla con tu pareja después de cada punto, aunque sea una palabra.","Mira la bola hasta el impacto en los golpes por arriba.","Pies activos: split-step en cada golpe del rival."];
 const typeLabel=t=>(TYPES.find(x=>x[0]===t)||[0,"Sesión"])[1];
 function dateTs(e){const t=Date.parse((e.date||"")+"T12:00:00");return isFinite(t)?t:(e.ts||0)}
 function liveEntries(all){return all.filter(e=>!e.deleted).sort((a,b)=>dateTs(a)-dateTs(b)||(a.ts||0)-(b.ts||0))}
@@ -852,7 +884,7 @@ function loadDraft(){
   if(!d.points){const b=blankDraft();if(d.text)b.voice=d.text;if(d.type)b.type=d.type;if(d.dur)b.dur=parseInt(d.dur,10)||null;return b}
   CATS.forEach(c=>{d.points[c.k]=d.points[c.k]||[]});return d;
 }
-ui={tab:"new",draft:loadDraft(),stash:null,editingId:null,justSaved:null,filter:"all",shot:"",open:null,tagSort:"freq",tagOpen:null};
+ui={moving:null,tab:"new",draft:loadDraft(),stash:null,editingId:null,justSaved:null,filter:"all",shot:"",open:null,tagSort:"freq",tagOpen:null};
 function persistDraft(){if(ui.editingId||!ui.draft)return;if(pristine(ui.draft)){try{localStorage.removeItem(LS_DRAFT)}catch(e){}}else lsSet(LS_DRAFT,ui.draft)}
 function allTagIds(){
   const used=new Set();
@@ -968,9 +1000,11 @@ function tagsInner(cat,it,i){
     +(it.auto?`<span class="tag auto">sugerido</span>`:"")
     +`<button class="tag add-tag" data-tagadd="${cat}:${i}">+ tag</button>`;
 }
+const MOVE_ICON=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4v16M8 4 4.5 7.5M8 4l3.5 3.5M16 20V4M16 20l-3.5-3.5M16 20l3.5-3.5"/></svg>`;
 function itemHTML(cat,it,i){
-  const opts=CATS.map(c=>`<option value="${c.k}"${c.k===cat?" selected":""}>${c.l}</option>`).join("");
-  return `<div class="item"><textarea class="it-t" rows="1" data-edit="${cat}:${i}" placeholder="${esc(CAT_PH[cat])}">${esc(it.t)}</textarea><div class="it-ctl"><select data-move="${cat}:${i}" aria-label="Mover a otro apartado">${opts}</select><button class="x" data-del="${cat}:${i}" aria-label="Quitar nota">×</button></div><div class="tags" id="tg-${cat}-${i}">${tagsInner(cat,it,i)}</div>${it.o&&norm(it.o)!==norm(it.t)?`<div class="said">Dijiste: «${esc(it.o)}»</div>`:""}</div>`;
+  const key=cat+":"+i,moving=ui.moving===key;
+  const mv=moving?`<div class="movebar"><span>Mover a</span>${CATS.filter(c=>c.k!==cat).map(c=>`<button class="chip" style="--mc:${c.c}" data-moveto="${key}:${c.k}">${c.l}</button>`).join("")}</div>`:"";
+  return `<div class="item${moving?" moving":""}"><textarea class="it-t" rows="1" data-edit="${cat}:${i}" placeholder="${esc(CAT_PH[cat])}">${esc(it.t)}</textarea><div class="it-ctl"><button class="x mv" data-move="${key}" aria-label="Mover a otro punto clave" aria-expanded="${moving}">${MOVE_ICON}</button><button class="x" data-del="${cat}:${i}" aria-label="Quitar nota">×</button></div>${mv}<div class="tags" id="tg-${cat}-${i}">${tagsInner(cat,it,i)}</div>${it.o&&norm(it.o)!==norm(it.t)?`<div class="said">Dijiste: «${esc(it.o)}»</div>`:""}</div>`;
 }
 function questionsHTML(d){
   if(!d.qs||!d.qs.length)return "";
@@ -1007,7 +1041,7 @@ function answerQ(qi,text,fromOpt){
   q.done=true;q.answer=text;render();
 }
 function viewEditor(){
-  const d=ui.draft,isMatch=d.type==="partido"||d.type==="torneo",editing=!!ui.editingId;
+  const d=ui.draft,isMatch=d.type==="torneo",editing=!!ui.editingId;
   const seg=(attr,val)=>`<div class="seg">${[1,2,3,4,5].map(n=>`<button data-${attr}="${n}" class="${val===n?"on":""}">${n}</button>`).join("")}</div>`;
   let top="";
   if(editing)top=`<div class="banner">Editando el registro del ${esc(fmtDate(d.date))}.</div>`;
@@ -1016,19 +1050,10 @@ function viewEditor(){
     const nEx=entries.filter(e=>e.example&&!e.deleted).length,nAll=entries.filter(e=>!e.deleted).length;
     if(PREVIEW)top+=`<div class="banner"><b>Versión de prueba.</b> Lo que registres se queda solo en este navegador y no se sincroniza con Drive. ${nEx?`Hay ${nEx} registros de ejemplo cargados. <button class="btn ghost small" data-act="clearEx" style="margin-top:8px">Quitar ejemplos</button>`:nAll?"":`<button class="btn ghost small" data-act="loadEx" style="margin-top:8px">Cargar 8 registros de ejemplo</button>`}</div>`;
     if(ui.justSaved&&R&&R.plan)top+=`<div class="banner ok"><b>Registro guardado.</b> Para la próxima: ${esc(R.plan.target?"céntrate en "+tagArt(R.plan.target):"trabaja la regularidad")}. Tienes el plan en Coach.</div>`;
-    else if(R&&R.plan&&pristine(d)){const lw=R.plan.lastWork;
-      top+=`<div class="card"><div class="kicker">Antes de jugar</div><div><b>Foco sugerido:</b> ${esc(R.plan.label)}</div>
-      ${lw.length?`<div><div class="label" style="margin-bottom:6px">Pendiente de tu última sesión</div><ul class="dots" style="--c:var(--work)">${lw.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`:""}
-      <div class="hint">${esc(R.plan.cue)}</div>
-      ${(()=>{const b=bookFor(R.plan.target);return b?`<div class="book"><div class="sub-h" style="margin:0">De tu libro</div><div>${esc(b[0])}</div></div>`:""})()}</div>`}
   }
-  const v=d.voice||"";
-  const voice=`<section class="voice"><div class="voice-h">${MIC}<h2>Nota de voz</h2></div>
-    <p class="hint">Toca el cuadro, pulsa el micrófono de tu teclado y cuéntalo todo seguido. Lo ordeno en los apartados de abajo${d.organized?" y se suma a lo que ya hay":""}.</p>
-    <textarea id="v-text" rows="3" placeholder="Nos hemos centrado en la bandeja. La bandeja bien, pero en la pared me precipitaba. Tengo que trabajar el globo…">${esc(v)}</textarea>
-    <div class="row"><button class="btn primary" data-act="organize" ${v.trim()?"":"disabled"}>Organizar en puntos clave</button></div>
-    <p class="hint" style="font-size:.76rem">La app no usa el micrófono ni guarda audio: solo recibe el texto que escribe tu teclado.</p></section>`;
-  const cats=CATS.map(c=>`<section class="cat" style="--c:${c.c}"><div class="cat-h"><h3>${c.l}</h3><span class="n">${d.points[c.k].filter(it=>String(it.t||"").trim()).length||""}</span></div>
+  const voice=`<button class="voicebtn" id="voicebtn" data-act="voice"><span class="mic">${MIC}</span><span><b id="vb-t">Nota de voz</b><small id="vb-s">${d.organized?"Dicta otra nota y se suma a tus puntos clave.":"Abre el teclado y pulsa su micrófono. Al terminar, lo ordeno en puntos clave."}</small></span></button>
+    <textarea id="v-text" aria-label="Nota de voz" enterkeyhint="done" autocapitalize="sentences"></textarea>`;
+  const cats=`<div class="kp-h"><h2>Puntos clave</h2></div>`+CATS.map(c=>`<section class="cat" style="--c:${c.c}"><div class="cat-h"><h3>${c.l}</h3><span class="n">${d.points[c.k].filter(it=>String(it.t||"").trim()).length||""}</span></div>
     ${d.points[c.k].map((it,i)=>itemHTML(c.k,it,i)).join("")}
     <button class="add" data-add="${c.k}">+ Añadir</button></section>`).join("");
   return `<div class="view">${top}
@@ -1037,8 +1062,8 @@ function viewEditor(){
     <div class="grid2">
       ${d.dateAuto?`<div class="field"><span class="label">Fecha</span><div class="autodate">${esc(nowLabel())}<button class="add" style="--c:var(--accent)" data-act="chdate">Cambiar</button></div></div>`:`<label class="field"><span class="label">Fecha</span><input type="date" id="d-date" value="${esc(d.date)}"></label>`}
       <label class="field"><span class="label">Duración (min)</span><input id="d-dur" inputmode="numeric" placeholder="90" value="${d.dur==null?"":d.dur}"></label>
-      <label class="field"><span class="label">Pareja</span><input id="d-partner" value="${esc(d.partner)}" placeholder="Nombre"></label>
-      ${isMatch?`<label class="field"><span class="label">Resultado</span><input id="d-result" value="${esc(d.result)}" placeholder="6-4 3-6 7-5"></label>`:`<span></span>`}
+      ${isMatch?`<label class="field"><span class="label">Pareja</span><input id="d-partner" value="${esc(d.partner)}" placeholder="Nombre"></label>
+      <label class="field"><span class="label">Resultado</span><input id="d-result" value="${esc(d.result)}" placeholder="6-4 3-6 7-5"></label>`:""}
     </div>
     ${isMatch?`<div class="chips"><button class="chip" data-won="1" aria-pressed="${d.won===true}">Ganado</button><button class="chip" data-won="0" aria-pressed="${d.won===false}">Perdido</button><button class="chip" data-won="" aria-pressed="${d.won==null}">Sin resultado</button></div>`:""}
   </section>
@@ -1049,7 +1074,6 @@ function viewEditor(){
     <div class="label">Sensaciones</div>${seg("feel",d.feel)}<div class="scale-ends"><span>muy malas</span><span>muy buenas</span></div>
     <div class="label">Energía física</div>${seg("energy",d.energy)}<div class="scale-ends"><span>sin pilas</span><span>a tope</span></div>
   </section>
-  ${d.raw?`<details class="raw"><summary>Lo que dictaste ${settings.keepRaw?"(se guardará)":"(no se guardará)"}</summary><p>${esc(d.raw)}</p></details>`:""}
   <div class="row"><button class="btn primary" data-act="save">${editing?"Guardar cambios":"Guardar registro"}</button></div>
   <div class="row"><button class="btn ghost small" data-act="cancel">${editing?"Cancelar":"Vaciar"}</button></div>
   <datalist id="taglist">${allTagIds().map(id=>`<option value="${esc(shotLabel(id))}"></option>`).join("")}</datalist>
@@ -1096,72 +1120,58 @@ function feelChart(F){
 const TSTAT={up:"Mejorando",strong:"Punto fuerte",weak:"A trabajar",down:"Empeora",steady:"Estable",new:"Poco dato"};
 const CATC={focus:"var(--focus)",good:"var(--good)",bad:"var(--bad)",work:"var(--work)",other:"var(--other)"};
 const agoTxt=ts=>{const d=Math.floor((Date.now()-ts)/DAY);return d<=0?"hoy":d===1?"ayer":`hace ${d} días`};
-function tagAnalysis(R){
-  const T=(R.tags||[]).filter(x=>x.sess>0);if(!T.length)return "";
-  const sort=ui.tagSort;let L=T.slice();
-  if(sort==="weak")L.sort((a,b)=>b.score-a.score||b.sess-a.sess);
-  else if(sort==="up")L.sort((a,b)=>(b.trend-a.trend)||(b.str-a.str)||b.sess-a.sess);
-  else L.sort((a,b)=>b.sess-a.sess||(b.g+b.b)-(a.g+a.b));
-  const mx=Math.max(1,...T.map(x=>x.f+x.g+x.b+x.w));
+function tagRow(x,mx){
+  const open=ui.tagOpen===x.id,seg=(c,n)=>n?`<i class="${c}" style="width:${(100*n/mx).toFixed(1)}%"></i>`:"";
+  const parts=[x.f&&`${x.f} enfoque`,x.g&&`${x.g} bien`,x.b&&`${x.b} no tan bien`,x.w&&`${x.w} a trabajar`].filter(Boolean).join(" · ");
+  const rate=x.g+x.b>0?fmt1(r1(tagRating(x))):"–";
+  let det="";
+  if(open){
+    const strip=x.hist.slice(-14).map(v=>`<i class="${v>0?"p":"n"}"></i>`).join("");
+    const tip=(x.status==="weak"||x.status==="down")?((DRILLS[x.id]||[DRILL_CUSTOM])[0]):x.status==="new"?"Sigue apuntándolo: con 3–4 menciones ya se ve si va a mejor.":x.status==="steady"?"Ni mejora ni empeora claramente. Ponle un objetivo concreto en la próxima sesión para moverlo.":"Mantenlo: unos minutos en el calentamiento bastan.";
+    det=`<div class="tdetail">
+      ${x.hist.length?`<div><div class="label" style="margin-bottom:6px">Evolución (de antes a ahora)</div><div class="strip">${strip}</div></div>`:""}
+      <div><div class="label" style="margin-bottom:6px">Últimas notas</div><ul class="tnotes">${x.notes.slice(-4).reverse().map(n=>`<li style="--c:${CATC[n.k]}"><small>${esc(fmtDate(n.d))}</small><span>${esc(n.t)}</span></li>`).join("")}</ul></div>
+      <div class="drill">${esc(tip)}</div>
+      ${bookFor(x.id)?`<div class="book"><div class="sub-h" style="margin:0">Apuntes tácticos</div><ul>${bookFor(x.id).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`:""}</div>`;
+  }
+  return `<div class="trow"><button class="thead" data-tag="${encodeURIComponent(x.id)}" aria-expanded="${open}">
+    <span class="tname">${esc(shotLabel(x.id))} <span class="trate">${rate}</span></span><span class="pill s s-${x.status}">${TSTAT[x.status]}</span>
+    <span class="stack" aria-label="${esc(parts)}">${seg("f",x.f)}${seg("g",x.g)}${seg("b",x.b)}${seg("w",x.w)}</span>
+    <span class="tmeta">${x.sess} ${x.sess===1?"sesión":"sesiones"} · ${parts||"sin valorar"} · última ${agoTxt(x.lastTs)}</span></button>${det}</div>`;
+}
+function tagSummary(T){
   const nm=a=>a.length?a.map(x=>esc(shotLabel(x.id))).join(", "):"—";
   const top=T.slice().sort((a,b)=>b.sess-a.sess).slice(0,3);
   const ups=T.filter(x=>x.status==="up"||x.status==="strong").sort((a,b)=>(b.trend-a.trend)||(b.str-a.str)).slice(0,3);
   const weak=T.filter(x=>x.status==="weak"||x.status==="down").sort((a,b)=>b.score-a.score).slice(0,3);
-  const sortChip=(k,l)=>`<button class="chip" data-tsort="${k}" aria-pressed="${sort===k}">${l}</button>`;
-  const rows=L.map(x=>{
-    const open=ui.tagOpen===x.id,seg=(c,n)=>n?`<i class="${c}" style="width:${(100*n/mx).toFixed(1)}%"></i>`:"";
-    const parts=[x.f&&`${x.f} enfoque`,x.g&&`${x.g} bien`,x.b&&`${x.b} no tan bien`,x.w&&`${x.w} a trabajar`].filter(Boolean).join(" · ");
-    let det="";
-    if(open){
-      const strip=x.hist.slice(-14).map(v=>`<i class="${v>0?"p":"n"}"></i>`).join("");
-      const tip=(x.status==="weak"||x.status==="down")?((DRILLS[x.id]||[DRILL_CUSTOM])[0]):x.status==="new"?"Sigue apuntándolo: con 3–4 menciones ya se ve si va a mejor.":x.status==="steady"?"Ni mejora ni empeora claramente. Ponle un objetivo concreto en la próxima sesión para moverlo.":"Mantenlo: unos minutos en el calentamiento bastan.";
-      det=`<div class="tdetail">
-        ${x.hist.length?`<div><div class="label" style="margin-bottom:6px">Evolución (de antes a ahora)</div><div class="strip">${strip}</div></div>`:""}
-        <div><div class="label" style="margin-bottom:6px">Últimas notas</div><ul class="tnotes">${x.notes.slice(-4).reverse().map(n=>`<li style="--c:${CATC[n.k]}"><small>${esc(fmtDate(n.d))}</small><span>${esc(n.t)}</span></li>`).join("")}</ul></div>
-        <div class="drill">${esc(tip)}</div>
-        ${bookFor(x.id)?`<div class="book"><div class="sub-h" style="margin:0">Tu libro</div><ul>${bookFor(x.id).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`:""}</div>`;
-    }
-    return `<div class="trow"><button class="thead" data-tag="${encodeURIComponent(x.id)}" aria-expanded="${open}">
-      <span class="tname">${esc(shotLabel(x.id))}</span><span class="pill s s-${x.status}">${TSTAT[x.status]}</span>
-      <span class="stack" aria-label="${esc(parts)}">${seg("f",x.f)}${seg("g",x.g)}${seg("b",x.b)}${seg("w",x.w)}</span>
-      <span class="tmeta">${x.sess} ${x.sess===1?"sesión":"sesiones"} · ${parts||"sin valorar"} · última ${agoTxt(x.lastTs)}</span></button>${det}</div>`;
-  }).join("");
-  return `<div class="card"><h2>Tus tags</h2>
-    <div class="tsum"><div><b>Más repasado</b><span>${nm(top)}</span></div><div><b>Va a mejor</b><span>${nm(ups)}</span></div><div><b>Necesita trabajo</b><span>${nm(weak)}</span></div></div>
-    <div class="chips">${sortChip("freq","Más frecuentes")}${sortChip("weak","Necesitan trabajo")}${sortChip("up","Mejorando")}</div>
-    <div class="keyleg"><span><i style="background:var(--focus)"></i>Enfoque</span><span><i style="background:var(--good)"></i>Salió bien</span><span><i style="background:var(--bad)"></i>No tan bien</span><span><i style="background:var(--work)"></i>A trabajar</span></div>
-    <div class="tlist">${rows}</div>
-    <p class="hint">Toca un tag para ver su evolución y tus últimas notas. «Mejorando» y «Empeora» comparan tus primeras valoraciones con las más recientes; lo de hace un mes pesa la mitad que lo de hoy.</p></div>`;
+  return `<div class="tsum"><div><b>Más repasado</b><span>${nm(top)}</span></div><div><b>Va a mejor</b><span>${nm(ups)}</span></div><div><b>Necesita trabajo</b><span>${nm(weak)}</span></div></div>`;
 }
 function viewCoach(){
   const R=analyze(entries);
   if(!R.n)return `<div class="view"><h2>Tu coach</h2><p class="empty">Cuando tengas registros, aquí verás tu plan para la próxima sesión, tus puntos fuertes y débiles y cómo evolucionas. Con 3–4 registros empieza a ser útil.</p></div>`;
   const P=R.plan;
+  const prev=`<div class="card"><div class="kicker">Apuntes previos</div>
+    <div><b>Foco sugerido:</b> ${esc(P.label)}</div>
+    ${P.lastWork.length?`<div><div class="sub-h">Pendiente de tu última sesión</div><ul class="dots" style="--c:var(--work)">${P.lastWork.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`:""}</div>`;
+  const tacIds=[P.target,...R.weak.map(x=>x.id)].filter((id,i,a)=>id&&a.indexOf(id)===i&&bookFor(id));
+  const tacItems=[];const seenT=new Set();
+  tacIds.forEach(id=>bookFor(id).forEach(t=>{if(!seenT.has(t)){seenT.add(t);tacItems.push({id,t})}}));
+  (bookFor("general")||[]).forEach(t=>{if(tacItems.length<3&&!seenT.has(t)){seenT.add(t);tacItems.push({id:null,t})}});
+  BOOK_IMPORTED.filter(h=>!(h.tags||[]).length).forEach(h=>{if(tacItems.length<4&&!seenT.has(h.t)){seenT.add(h.t);tacItems.push({id:null,t:h.t})}});
   const plan=`<div class="card hero"><div class="kicker">Tu próxima sesión</div>
     <div class="big">${esc(P.label)}</div><p class="hint" style="font-size:.9rem;color:var(--ink)">${esc(P.why)}</p>
-    ${P.drills.map(d=>`<div class="drill">${esc(d)}</div>`).join("")}
-    ${P.keep?`<div class="hint">Y no pierdas lo que funciona: dedica unos minutos del calentamiento a ${esc(tagArt(P.keep))}.</div>`:""}
-    ${P.lastWork.length?`<div><div class="label" style="margin-bottom:6px">Lo que te apuntaste la última vez</div><ul class="dots" style="--c:var(--work)">${P.lastWork.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`:""}
-    <div style="border-top:1px dashed var(--line);padding-top:10px"><span class="label">Clave mental</span><div style="margin-top:4px">${esc(P.cue)}</div></div>
-    <div style="border-top:1px dashed var(--line);padding-top:10px"><div class="sub-h">En casa o en el gimnasio</div><ul class="dots" style="--c:var(--accent)">${(GYM[P.target]||GYM.general).slice(0,3).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
-    <div><div class="sub-h">Para aprender más sobre ${esc(P.target?shotLabel(P.target).toLowerCase():"tu juego")}</div><div class="links">${learnLinks(P.target).map(x=>`<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.l)}</a>`).join("")}</div>
-    <p class="hint" style="margin-top:6px;font-size:.76rem">Abren una búsqueda actualizada para que siempre encuentres vídeos y artículos vigentes.</p></div></div>`;
-  const shots=tagAnalysis(R);
+    <div class="psec"><div class="sub-h">Ejercicios en pista</div>${P.drills.map(d=>`<div class="drill">${esc(d)}</div>`).join("")}</div>
+    ${tacItems.length?`<div class="psec"><div class="sub-h">Apuntes tácticos</div>${tacItems.slice(0,4).map(x=>`<div class="drill">${esc(x.t)}${x.id?` <span class="tag">${esc(shotLabel(x.id))}</span>`:""}</div>`).join("")}<small class="hint" style="font-size:.74rem">Basado en ${esc(BOOK_SRC)}.</small></div>`:""}
+    <div class="psec"><div class="sub-h">Clave mental</div><div class="drill">${esc(P.cue)}</div></div></div>`;
+  const gym=`<div class="card"><h2>En casa o en el gimnasio</h2><ul class="dots" style="--c:var(--accent)">${(GYM[P.target]||GYM.general).slice(0,3).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`;
+  const links=`<div class="card"><h2>Para aprender más sobre ${esc(P.target?shotLabel(P.target).toLowerCase():"tu juego")}</h2><div class="links">${learnLinks(P.target).map(x=>`<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.l)}</a>`).join("")}</div></div>`;
   const fc=feelChart(R.feel);
   const feel=fc?`<div class="card"><h2>Sensaciones</h2>${fc}<p class="hint">Últimas ${R.feel.length} sesiones. Amarillo: partidos.</p></div>`:"";
   const M=R.matches;
   const matches=M?`<div class="card"><h2>Partidos</h2><div class="stats"><div class="stat"><b>${M.n}</b><span>jugados</span></div><div class="stat"><b>${M.pct} %</b><span>ganados</span></div><div class="stat"><b>${M.streak}</b><span>${M.streakWon?"racha ganando":"racha perdiendo"}</span></div></div>
     <div class="e-sub">${M.last.map(w=>`<span class="wl ${w?"w":"l"}">${w?"G":"P"}</span>`).join("")}</div></div>`:"";
   const ins=R.insights.length?`<div class="card"><h2>Observaciones</h2><ul class="ins">${R.insights.map(x=>`<li class="${x.tone}">${esc(x.t)}</li>`).join("")}</ul></div>`:"";
-  const tacIds=[P.target,...R.weak.map(x=>x.id)].filter((id,i,a)=>id&&a.indexOf(id)===i&&bookFor(id));
-  const tacItems=[];const seenT=new Set();
-  tacIds.forEach(id=>bookFor(id).forEach(t=>{if(!seenT.has(t)){seenT.add(t);tacItems.push({id,t})}}));
-  BOOK.general.forEach(t=>{if(tacItems.length<3&&!seenT.has(t)){seenT.add(t);tacItems.push({id:null,t})}});
-  BOOK_IMPORTED.filter(h=>!(h.tags||[]).length).forEach(h=>{if(tacItems.length<4&&!seenT.has(h.t)){seenT.add(h.t);tacItems.push({id:null,t:h.t})}});
-  const tac=`<div class="card tac"><div class="kicker">Recomendaciones tácticas</div>
-    <ul class="tac-list">${tacItems.slice(0,4).map(x=>`<li><span>${esc(x.t)}</span>${x.id?`<span class="tag">${esc(shotLabel(x.id))}</span>`:""}</li>`).join("")}</ul>
-    <small class="hint" style="font-size:.74rem">Basado en tus subrayados de ${esc(BOOK_SRC)}.</small></div>`;
-  return `<div class="view">${plan}${tac}${shots}${ins}${feel}${matches}<p class="hint">El análisis se hace en tu móvil a partir de tus registros. No se envía a ningún servicio de IA.</p></div>`;
+  return `<div class="view">${prev}${plan}${gym}${links}${ins}${feel}${matches}<p class="hint">El análisis se hace en tu móvil a partir de tus registros. No se envía a ningún servicio de IA.</p></div>`;
 }
 const fmt1=v=>v==null?"–":v.toFixed(1).replace(".",",");
 const lvClass=v=>v==null?"":v>=4?"lv-top":v>=3?"lv-good":v>=2?"lv-mid":"lv-low";
@@ -1184,37 +1194,45 @@ function radarSVG(cur,prev){
 }
 function viewRank(){
   const R=analyze(entries);
-  if(R.n<3)return `<div class="view"><h2>Ranking</h2><div class="card"><p style="margin:0">Con 3 registros creo tu carta de jugador con 8 habilidades puntuadas sobre 5. ${R.n?`Te ${3-R.n===1?"falta 1":"faltan "+(3-R.n)}.`:"Empieza en Registrar."}</p><p class="hint">Las puntuaciones salen de lo que apuntas en «Salió bien» y «No tan bien» y de los tags de cada nota.</p></div></div>`;
+  if(R.n<3)return `<div class="view"><h2>Valoración</h2><div class="card"><p style="margin:0">Con 3 registros creo tu carta de jugador con 8 habilidades puntuadas sobre 5. ${R.n?`Te ${3-R.n===1?"falta 1":"faltan "+(3-R.n)}.`:"Empieza en Registrar."}</p><p class="hint">Las puntuaciones salen de lo que apuntas en «Salió bien» y «No tan bien» y de los tags de cada nota.</p></div></div>`;
   const X=calcRating(R);
   const old=liveEntries(entries).filter(e=>dateTs(e)<=Date.now()-30*DAY);
   const P=old.length>=3?calcRating(analyze(old,Date.now()-30*DAY)):null;
   const dOv=P?r1(X.overall-P.overall):null;
-  const name=(settings.playerName||"").trim()||"Jugador";
-  const card=`<div class="pcard ${X.tier}">
-    <div class="pc-top"><div class="pc-ovr"><b>${fmt1(X.overall)}</b><span>MEDIA / 5</span><small>${esc(settings.side?SIDE_L[settings.side].toUpperCase():"PÁDEL")}</small></div><div class="pc-ball" aria-hidden="true"></div><span class="pc-tier">${TIER_L[X.tier]}</span></div>
-    <div class="pc-name">${esc(name)}</div>
+  const card=`<div class="pcard">
+    <div class="pc-top"><div class="pc-ovr"><b>${fmt1(X.overall)}</b><span>MEDIA / 5</span></div><div class="pc-ball" aria-hidden="true"></div></div>
+    <div class="pc-sep"></div>
     <div class="pc-stats">${X.skills.map(k=>`<div class="${k.v==null?"na":""}"><b>${fmt1(k.v)}</b><span>${k.ab}</span></div>`).join("")}</div>
   </div>`;
-  const ident=`<div class="card"><label class="field"><span class="label">Nombre en la carta</span><input id="r-name" value="${esc(settings.playerName)}" placeholder="Tu nombre" maxlength="18" autocomplete="off"></label>
-    <div><div class="label" style="margin-bottom:6px">Juegas en</div><div class="chips sidechips">${Object.entries(SIDE_L).map(([k,l])=>`<button class="chip" data-side="${k}" aria-pressed="${settings.side===k}">${l}</button>`).join("")}</div></div></div>`;
   const ranked=X.skills.slice().sort((a,b)=>(a.v==null?-1:a.v)-(b.v==null?-1:b.v)).slice(0,3);
   const tips=ranked.map(k=>{
     if(k.v==null)return `<li><b>${k.l}</b> aún no tiene nota (cuenta como 1,5). Apunta cómo te sale ${k.ids.map(id=>shotLabel(id).toLowerCase()).join(", ")} y subirá tu media.</li>`;
     const worst=k.tags.filter(t=>t.v!=null).sort((a,b)=>a.v-b.v)[0];const miss=k.tags.filter(t=>!t.sess);
     return `<li><b>${k.l} ${fmt1(k.v)}</b>: ${worst&&worst.v<2.5?`lo que más te frena es ${shotLabel(worst.id).toLowerCase()} (${fmt1(worst.v)}).`:miss.length?`te falta valorar ${miss.map(t=>shotLabel(t.id).toLowerCase()).join(", ")}.`:"sigue sumando sesiones con buenas sensaciones."}</li>`}).join("");
-  const rows=X.skills.map((k,i)=>{const pv=P?P.skills[i].v:null;const d=pv!=null&&k.v!=null?r1(k.v-pv):null;
-    return `<div class="skrow"><span class="ab">${k.ab}</span><span class="nm">${k.l}${d?`<em class="${d>0?"up":"down"}">${d>0?"▲ +":"▼ "}${fmt1(Math.abs(d)).replace(/^/,d<0?"":"")}</em>`:""}</span><span class="v">${fmt1(k.v)}</span>
-      <span class="skbar"><i class="${lvClass(k.v)}" style="width:${k.v==null?0:k.v*20}%"></i></span>
-      <span class="sktags">${k.tags.map(t=>`${esc(shotLabel(t.id))} ${fmt1(t.v)}`).join(" · ")}</span></div>`}).join("");
+  const TT={};(R.tags||[]).forEach(x=>TT[x.id]=x);
+  const used=(R.tags||[]).filter(x=>x.sess>0);
+  const mx=Math.max(1,...used.map(x=>x.f+x.g+x.b+x.w));
+  const inner=ids=>{const have=ids.map(id=>TT[id]).filter(x=>x&&x.sess>0).sort((a,b)=>b.sess-a.sess);const none=ids.filter(id=>!TT[id]||!TT[id].sess);
+    return `<div class="sk-tags">${have.map(x=>tagRow(x,mx)).join("")}${none.length?`<p class="hint" style="margin:8px 0 0">Sin notas todavía: ${none.map(id=>esc(shotLabel(id))).join(", ")}.</p>`:""}</div>`};
+  const rows=X.skills.map((k,i)=>{const pv=P?P.skills[i].v:null;const d=pv!=null&&k.v!=null?r1(k.v-pv):null;const open=ui.skillOpen===k.k;
+    return `<div class="skwrap${open?" open":""}"><button class="skrow" data-skill="${k.k}" aria-expanded="${open}"><span class="ab">${k.ab}</span><span class="nm">${k.l}${d?`<em class="${d>0?"up":"down"}">${d>0?"▲ +":"▼ "}${fmt1(Math.abs(d))}</em>`:""}</span><span class="v">${fmt1(k.v)}</span>
+      <span class="skbar"><i class="${lvClass(k.v)}" style="width:${k.v==null?0:k.v*20}%"></i></span><span class="chev" aria-hidden="true">›</span>
+      <span class="sktags">${k.tags.map(t=>`${esc(shotLabel(t.id))} ${fmt1(t.v)}`).join(" · ")}</span></button>${open?inner(k.ids):""}</div>`}).join("");
+  const custom=used.filter(x=>!SKILLS.some(k=>k.ids.includes(x.id)));
+  const otherOpen=ui.skillOpen==="otros";
+  const others=custom.length?`<div class="skwrap${otherOpen?" open":""}"><button class="skrow" data-skill="otros" aria-expanded="${otherOpen}"><span class="ab">+</span><span class="nm">Tus tags propios</span><span class="v"></span>
+      <span class="skbar" style="visibility:hidden"></span><span class="chev" aria-hidden="true">›</span><span class="sktags">${custom.map(x=>`${esc(shotLabel(x.id))} ${x.g+x.b?fmt1(r1(tagRating(x))):"–"}`).join(" · ")}</span></button>${otherOpen?`<div class="sk-tags">${custom.map(x=>tagRow(x,mx)).join("")}</div>`:""}</div>`:"";
   return `<div class="view">
     ${card}
     ${dOv!=null?`<p class="hint" style="text-align:center;margin-top:-8px">${dOv>0?`▲ +${fmt1(dOv)} de media en los últimos 30 días`:dOv<0?`▼ ${fmt1(Math.abs(dOv))} menos de media que hace 30 días`:"Misma media que hace 30 días"}</p>`:""}
     <div class="card"><h2>Tus habilidades</h2>${radarSVG(X.skills,P?P.skills:null)}
       <div class="rleg"><span><i style="background:var(--accent)"></i>Ahora</span>${P?`<span><i style="background:var(--muted)"></i>Hace 30 días</span>`:""}<span><i style="background:var(--line);height:2px"></i>Borde = 5, nivel profesional</span></div></div>
     <div class="card"><h2>Para subir tu media</h2><ul class="dots" style="--c:var(--work)">${tips}</ul></div>
-    <div class="card"><h2>Detalle</h2><div>${rows}</div>
-      <p class="hint">Cada habilidad va de 0 a 5 (5 = nivel profesional). Sale de tus notas en «Salió bien» y «No tan bien» con esos tags, con más peso a lo reciente; tiene más nota cuantos más aspectos de la habilidad valoras. Con pocas notas tiende a 2. La media cuenta con 1,5 las habilidades sin datos. Carta: bronce hasta 2,4 · plata desde 2,5 · oro desde 3,5 · élite desde 4,3.</p></div>
-    ${ident}
+    <div class="card"><h2>Habilidades</h2>
+      ${used.length?tagSummary(used):""}
+      <div class="keyleg"><span><i style="background:var(--focus)"></i>Enfoque</span><span><i style="background:var(--good)"></i>Salió bien</span><span><i style="background:var(--bad)"></i>No tan bien</span><span><i style="background:var(--work)"></i>A trabajar</span></div>
+      <div>${rows}${others}</div>
+      <p class="hint">Toca una habilidad para ver sus tags, y un tag para ver su evolución y tus últimas notas. Cada habilidad y cada tag va de 0 a 5 (5 = nivel profesional). Sale de tus notas en «Salió bien» y «No tan bien» con esos tags, con más peso a lo reciente; tiene más nota cuantos más aspectos de la habilidad valoras. Con pocas notas tiende a 2. La media cuenta con 1,5 las habilidades sin datos.</p></div>
   </div>`;
 }
 function viewSettings(){
@@ -1252,6 +1270,7 @@ function viewSettings(){
 /* ---------- Acciones ---------- */
 function organize(){
   const d=ui.draft,text=(d.voice||"").trim();if(!text)return;
+  const before=CATS.reduce((n,c)=>n+d.points[c.k].filter(it=>String(it.t||"").trim()).length,0);
   const p=parseSession(text);
   if(p.type&&!d.typeTouched)d.type=p.type;
   if(!d.dur&&p.dur)d.dur=p.dur;
@@ -1263,7 +1282,9 @@ function organize(){
   d.qs=buildQuestions(d);
   ensureBlanks(d);
   ui.justSaved=null;render();
-  const q=document.querySelector(".qcard")||document.querySelector(".cat");if(q)q.scrollIntoView({behavior:"smooth",block:"start"});
+  const after=CATS.reduce((n,c)=>n+d.points[c.k].filter(it=>String(it.t||"").trim()).length,0);
+  toast(after>before?`${after-before} nota${after-before===1?"":"s"} añadida${after-before===1?"":"s"} a tus puntos clave`:"No he encontrado puntos clave en lo que has dicho");
+  const q=document.querySelector(".qcard")||document.querySelector(".kp-h");if(q)q.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function saveDraft(){
   const d=ui.draft;const now=Date.now();
@@ -1273,7 +1294,7 @@ function saveDraft(){
   if(!n){toast("Escribe o dicta al menos una nota");return}
   const base=ui.editingId?entries.find(e=>e.id===ui.editingId):null;
   if(d.dateAuto)d.date=todayISO();
-  const e={id:ui.editingId||uid(),ts:base?base.ts:now,updatedAt:now,date:d.date||todayISO(),type:d.type,dur:d.dur||null,partner:(d.partner||"").trim(),result:(d.type==="partido"||d.type==="torneo")?(d.result||"").trim():"",won:(d.type==="partido"||d.type==="torneo")?d.won:null,feel:d.feel||null,energy:d.energy||null,points};
+  const e={id:ui.editingId||uid(),ts:base?base.ts:now,updatedAt:now,date:d.date||todayISO(),type:d.type,dur:d.dur||null,partner:d.type==="torneo"?(d.partner||"").trim():"",result:d.type==="torneo"?(d.result||"").trim():"",won:d.type==="torneo"?d.won:null,feel:d.feel||null,energy:d.energy||null,points};
   if(base&&base.example)e.example=true;
   if(settings.keepRaw&&d.raw)e.raw=d.raw;
   if(base&&base.raw&&settings.keepRaw&&!e.raw)e.raw=base.raw;
@@ -1299,8 +1320,12 @@ document.addEventListener("click",ev=>{
   const ds=b.dataset;
   if(ds.tab){ui.tab=ds.tab;ui.justSaved=null;render();window.scrollTo(0,0);return}
   if(ds.dtype){ui.draft.type=ds.dtype;ui.draft.typeTouched=true;render();return}
+  if(ds.move){ui.moving=ui.moving===ds.move?null:ds.move;render();return}
+  if(ds.moveto){const [c,i,to]=ds.moveto.split(":");const P=ui.draft.points;const it=P[c].splice(+i,1)[0];ui.moving=null;
+    if(it){if(to==="work")it.auto=false;P[to]=P[to].filter(x=>String(x.t||"").trim());P[to].push(it);ensureBlanks(ui.draft);render();toast("Nota movida a "+CATS.find(x=>x.k===to).l)}return}
   if(ds.untag){const [c,i,id]=ds.untag.split(":");const it=ui.draft.points[c][+i];const tid=decodeURIComponent(id);if(it){it.s=(it.s||[]).filter(x=>x!==tid);it.rm=[...new Set([...(it.rm||[]),tid])]}refreshTags(c,+i);persistDraft();return}
   if(ds.tagadd){const [c,i]=getRef(ds.tagadd);const inp=document.createElement("input");inp.className="tag-in";inp.setAttribute("list","taglist");inp.dataset.tagin=ds.tagadd;inp.placeholder="Nuevo tag";inp.enterKeyHint="done";inp.autocapitalize="sentences";b.replaceWith(inp);inp.focus();return}
+  if(ds.skill){ui.skillOpen=ui.skillOpen===ds.skill?null:ds.skill;ui.tagOpen=null;render();return}
   if(ds.tag){const id=decodeURIComponent(ds.tag);ui.tagOpen=ui.tagOpen===id?null:id;render();return}
   if(ds.tsort){ui.tagSort=ds.tsort;render();return}
   if(ds.side){settings.side=settings.side===ds.side?"":ds.side;saveSettings();render();return}
@@ -1316,7 +1341,7 @@ document.addEventListener("click",ev=>{
   if(ds.filter){ui.filter=ds.filter;render();return}
   const act=ds.act;if(!act)return;
   if(act==="sync"){sync(true);return}
-  if(act==="organize"){organize();return}
+  if(act==="voice"){const ta=$("#v-text");if(!ta)return;if(ui.listening){ui.listening=false;if(document.activeElement===ta)ta.blur();else finishVoice();return}ui.listening=true;ta.value="";ui.draft.voice="";ta.focus();b.classList.add("on");$("#vb-t").textContent="Te escucho a través del teclado";$("#vb-s").textContent="Pulsa el micrófono de tu teclado y habla.";return}
   if(act==="chdate"){ui.draft.dateAuto=false;ui.draft.date=todayISO();render();const i=$("#d-date");if(i)i.focus();return}
   if(act==="save"){saveDraft();return}
   if(act==="cancel"){if(ui.editingId){ui.draft=ui.stash||null;ui.stash=null;ui.editingId=null;ui.tab="hist";render();return}if(!armed(b,"Toca otra vez para vaciar"))return;ui.draft=blankDraft();ui.justSaved=null;render();window.scrollTo(0,0);return}
@@ -1335,7 +1360,7 @@ document.addEventListener("input",ev=>{
   const t=ev.target;
   if(t.id==="r-name"){settings.playerName=t.value;saveSettings();const n=document.querySelector(".pc-name");if(n)n.textContent=t.value.trim()||"Jugador";return}
   if(!ui.draft)return;
-  if(t.id==="v-text"){ui.draft.voice=t.value;const b=$("[data-act=organize]");if(b)b.disabled=!t.value.trim();persistDraft();return}
+  if(t.id==="v-text"){ui.draft.voice=t.value;const w=t.value.trim()?t.value.trim().split(/\s+/).length:0;const s2=$("#vb-s");if(s2)s2.textContent=w?`${w} palabra${w===1?"":"s"}… Cierra el teclado o pulsa Listo al terminar.`:"Pulsa el micrófono de tu teclado y habla.";persistDraft();return}
   if(t.dataset&&t.dataset.edit){const [c,i]=getRef(t.dataset.edit);const it=ui.draft.points[c][i];if(it){it.t=t.value;it.auto=false;
       const det=detectTags(t.value).filter(id=>!(it.rm||[]).includes(id)&&!(it.s||[]).includes(id));if(det.length){it.s=[...(it.s||[]),...det];refreshTags(c,i)}}
     autosize(t);persistDraft();return}
@@ -1347,7 +1372,6 @@ document.addEventListener("input",ev=>{
 });
 document.addEventListener("change",ev=>{
   const t=ev.target;
-  if(t.dataset&&t.dataset.move){const [c,i]=getRef(t.dataset.move);const it=ui.draft.points[c].splice(i,1)[0];if(it){if(t.value==="work")it.auto=false;ui.draft.points[t.value].push(it)}render();return}
   if(t.id==="h-shot"){ui.shot=t.value;render();return}
   if(t.id==="s-raw"){settings.keepRaw=t.checked;saveSettings();return}
   if(t.id==="kindleFile"&&t.files&&t.files[0]){const f=t.files[0];f.text().then(txt=>{const r=importKindle(txt);if(r.err){toast(r.err);return}
@@ -1355,9 +1379,11 @@ document.addEventListener("change",ev=>{
   if(t.id==="importFile"&&t.files&&t.files[0]){const f=t.files[0];f.text().then(txt=>{const j=JSON.parse(txt);const list=Array.isArray(j)?j:(j.entries||[]);if(!Array.isArray(list))throw new Error();const before=entries.length;entries=mergeEntries(entries,list);refreshCustom();changed();render();toast(`Importado (${entries.length-before} nuevos)`)}).catch(()=>toast("Ese archivo no es una copia válida"));t.value="";}
 });
 document.addEventListener("keydown",ev=>{const t=ev.target;
+  if(t.id==="v-text"&&ev.key==="Enter"){ev.preventDefault();t.blur();return}
   if(ev.key==="Enter"&&t.id&&t.id.startsWith("qf-")){ev.preventDefault();const v=t.value.trim();if(v)answerQ(+t.id.slice(3),v,false)}
   if(t.dataset&&t.dataset.tagin&&(ev.key==="Enter"||ev.key==="Escape")){ev.preventDefault();const [c,i]=getRef(t.dataset.tagin);t.dataset.done="1";if(ev.key==="Enter")addTag(c,i,t.value);else refreshTags(c,i)}});
-document.addEventListener("focusout",ev=>{const t=ev.target;if(t.dataset&&t.dataset.tagin&&!t.dataset.done){const [c,i]=getRef(t.dataset.tagin);t.dataset.done="1";if(t.value.trim())addTag(c,i,t.value);else refreshTags(c,i)}});
+function finishVoice(){if(finishVoice.busy)return;finishVoice.busy=true;setTimeout(()=>finishVoice.busy=false,300);ui.listening=false;const ta=$("#v-text");const b=$("#voicebtn");if(b)b.classList.remove("on");if(ta&&ta.value.trim()){ui.draft.voice=ta.value;organize()}else if(b){$("#vb-t").textContent="Nota de voz";$("#vb-s").textContent="Abre el teclado y pulsa su micrófono. Al terminar, lo ordeno en puntos clave."}}
+document.addEventListener("focusout",ev=>{if(ev.target.id==="v-text"){if(ev.relatedTarget&&ev.relatedTarget.id==="voicebtn")return;setTimeout(finishVoice,60);return}const t=ev.target;if(t.dataset&&t.dataset.tagin&&!t.dataset.done){const [c,i]=getRef(t.dataset.tagin);t.dataset.done="1";if(t.value.trim())addTag(c,i,t.value);else refreshTags(c,i)}});
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&Drive.valid())sync(false)});
 
 if(settings.clientId&&!PREVIEW)Drive.load().catch(()=>{});
